@@ -1,19 +1,16 @@
 import React from 'react';
-import { Link } from 'expo-router';
+import { ThemedText } from '@/components/ThemedText';
 import { Button, TextInput } from 'react-native-paper';
 import { StyleSheet, Image } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
 
 
-export default function LoginScreen() {
+export default function ForgotPasswordScreen() {
   const [phone, setPhone] = React.useState("");
-  const [password, setPassword] = React.useState("");
 
-  const handleLogin = () => {
+  function handleRequestChangePassword() {
     // TODO: Implement login logic
-    console.log("Login with phone: ", phone, " and password: ", password);
-    // Replace with actual login logic when ready
   }
 
   return (
@@ -26,28 +23,15 @@ export default function LoginScreen() {
         />
       }>
       <ThemedView style={styles.stepContainer}>
+        <ThemedText>
+          Please enter your phone number to ask for a link to reset your password.
+        </ThemedText>
         <TextInput
           label="Phone number"
           value={phone}
           onChangeText={text => setPhone(text)}
         />
-        <TextInput
-          mode="outlined"
-          label="Password"
-          placeholder="Type your password"
-          value={password}
-          right={<TextInput.Affix text="/100" />}
-          onChangeText={text => setPassword(text)}
-        />
-        <Button mode="contained" onPress={handleLogin}>Login</Button>
-        <Link href="/register" style={{
-          color: 'white', textDecorationLine: 'underline'
-          }}>Not registered yet? Do it here!
-        </Link>
-        <Link href="/forgot-password" style={{
-          color: 'white', textDecorationLine: 'underline'
-          }}>Forgot your password?
-        </Link>
+        <Button mode="contained" onPress={handleRequestChangePassword}>Submit</Button>
       </ThemedView>
     </ParallaxScrollView>
   );

@@ -1,30 +1,114 @@
-import { StyleSheet } from 'react-native';
+import React from 'react';
+import { Link } from 'expo-router';
+import { Button, TextInput } from 'react-native-paper';
+import { StyleSheet, Image } from 'react-native';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { ThemedView } from '@/components/ThemedView';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
 
 export default function RegisterScreen() {
+  const [phone, setPhone] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [isPassIdentical, setIsPassIdentical] = React.useState(false);
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+
+  const handleRegister = () => {
+    // TODO: Implement login logic
+    console.log("Login with phone: ", phone, " and password: ", password);
+    // Replace with actual login logic when ready
+  }
+
+  const checkValidPhoneNumber = (phone: string) => {
+    //TODO: Implement phone number validation logic
+    if (true) {
+      setPhone(phone);
+    }
+  }
+
+  const checkValidPassword = (password: string) => {
+    // TODO: Implement password validation logic
+    if (true) {
+      setPassword(password);
+    }
+  }
+
+  const checkIdenticalConfirmedPass = (pass: string) => {
+    setIsPassIdentical(pass === password);
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-    </View>
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerImage={
+        <Image
+          source={require('@/assets/images/partial-react-logo.png')}
+          style={styles.reactLogo}
+        />
+      }>
+      <ThemedView style={styles.stepContainer}>
+        <TextInput
+          label="Phone number"
+          value={phone}
+          onChangeText={checkValidPhoneNumber}
+        />
+        <TextInput
+          mode="outlined"
+          label="Password"
+          placeholder="Type your password"
+          value={password}
+          right={<TextInput.Affix text="/100" />}
+          onChangeText={checkValidPassword}
+        />
+        <TextInput
+          mode="outlined"
+          error={!isPassIdentical}
+          label="Confirm Password"
+          placeholder="Type your password again"
+          right={<TextInput.Affix text="/100" />}
+          onChangeText={checkIdenticalConfirmedPass}
+        />
+        <TextInput
+          mode="outlined"
+          label="First name"
+          placeholder="Type your first name"
+          value={firstName}
+          right={<TextInput.Affix text="/100" />}
+          onChangeText={text => setFirstName(text)}
+        />
+        <TextInput
+          mode="outlined"
+          label="Last name"
+          placeholder="Type your last name"
+          value={lastName}
+          right={<TextInput.Affix text="/100" />}
+          onChangeText={text => setLastName(text)}
+        />
+        <Button mode="contained" onPress={handleRegister}>Register</Button>
+        <Link href="/" style={{
+          color: 'white', textDecorationLine: 'underline'
+          }}>Have an account already?
+        </Link>
+      </ThemedView>
+    </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  titleContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 8,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  stepContainer: {
+    gap: 8,
+    marginBottom: 8,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
   },
 });
