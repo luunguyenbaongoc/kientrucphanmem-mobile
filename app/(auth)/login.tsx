@@ -38,6 +38,7 @@ export default function LoginScreen() {
           mode="outlined"
           label="Mật khẩu"
           placeholder="Nhập mật khẩu"
+          secureTextEntry={true}
           value={password}
           onChangeText={(text) => setPassword(text)}
         />

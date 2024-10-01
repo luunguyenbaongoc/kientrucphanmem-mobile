@@ -39,6 +39,8 @@ export default function AuthLayout() {
       <Stack.Screen options={{headerTitle: 'Đăng nhập'}} name="login" />
       <Stack.Screen options={{headerTitle: 'Đăng ký'}} name="register" />
       <Stack.Screen options={{headerTitle: 'Quên mật khẩu'}} name="forgot-password" />
+      <Stack.Screen options={{headerTitle: 'Xác nhận OTP'}} name="submit-otp" />
+      <Stack.Screen options={{headerTitle: 'Nhập mật khẩu mới'}} name="reset-password" />
     </Stack>
   );
 }
