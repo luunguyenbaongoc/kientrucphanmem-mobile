@@ -1,16 +1,19 @@
 import React from "react";
-import { ThemedText } from "@/components/ThemedText";
+import { Link } from "expo-router";
 import { Button, TextInput } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 
-export default function ForgotPasswordScreen() {
+export default function LoginScreen() {
   const [phone, setPhone] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-  function handleRequestChangePassword() {
+  const handleLogin = () => {
     // TODO: Implement login logic
-  }
+    console.log("Login with phone: ", phone, " and password: ", password);
+    // Replace with actual login logic when ready
+  };
 
   return (
     <ParallaxScrollView
@@ -23,7 +26,6 @@ export default function ForgotPasswordScreen() {
       }
     >
       <ThemedView style={styles.stepContainer}>
-        <ThemedText>Nhập số điện thoại để lấy lại mật khẩu.</ThemedText>
         <TextInput
           autoFocus
           mode="outlined"
@@ -32,13 +34,36 @@ export default function ForgotPasswordScreen() {
           value={phone}
           onChangeText={(text) => setPhone(text)}
         />
+        <TextInput
+          mode="outlined"
+          label="Mật khẩu"
+          placeholder="Nhập mật khẩu"
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"
-          onPress={handleRequestChangePassword}
+          onPress={handleLogin}
         >
-          Gửi
+          Đăng nhập
         </Button>
+        <Link
+          href="/register"
+          style={{
+            color: "black",
+          }}
+        >
+          Đăng ký mới
+        </Link>
+        <Link
+          href="/forgot-password"
+          style={{
+            color: "black",
+          }}
+        >
+          Quên mật khẩu?
+        </Link>
       </ThemedView>
     </ParallaxScrollView>
   );

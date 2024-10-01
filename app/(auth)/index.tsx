@@ -1,73 +1,73 @@
-import React from 'react';
-import { Link } from 'expo-router';
-import { Button, TextInput } from 'react-native-paper';
-import { StyleSheet, Image } from 'react-native';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedView } from '@/components/ThemedView';
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { router } from "expo-router";
+import { Image, StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 
-
-export default function LoginScreen() {
-  const [phone, setPhone] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
-  const handleLogin = () => {
-    // TODO: Implement login logic
-    console.log("Login with phone: ", phone, " and password: ", password);
-    // Replace with actual login logic when ready
-  }
-
+export default function AuthRootScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+    <View style={styles.container}>
+      <View style={styles.image_container}>
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.stepContainer}>
-        <TextInput
-          label="Phone number"
-          value={phone}
-          onChangeText={text => setPhone(text)}
-        />
-        <TextInput
-          mode="outlined"
-          label="Password"
-          placeholder="Type your password"
-          value={password}
-          right={<TextInput.Affix text="/100" />}
-          onChangeText={text => setPassword(text)}
-        />
-        <Button mode="contained" onPress={handleLogin}>Login</Button>
-        <Link href="/register" style={{
-          color: 'white', textDecorationLine: 'underline'
-          }}>Not registered yet? Do it here!
-        </Link>
-        <Link href="/forgot-password" style={{
-          color: 'white', textDecorationLine: 'underline'
-          }}>Forgot your password?
-        </Link>
-      </ThemedView>
-    </ParallaxScrollView>
+          style={styles.image}
+          source={require("@/assets/images/unauth-cover.jpg")}
+          resizeMode="cover"
+        ></Image>
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.content_title}>Zola</Text>
+        <View style={styles.button_container}>
+          <Button
+            textColor="white"
+            style={[styles.login, styles.button]}
+            onPress={() => {
+              router.navigate("./login");
+            }}
+          >
+            Đăng nhập
+          </Button>
+          <Button
+            textColor="white"
+            style={[styles.register, styles.button]}
+            onPress={() => {
+              router.navigate("./register");
+            }}
+          >
+            Tạo tài khoản mới
+          </Button>
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    height: "100%",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  image_container: {
+    height: "60%",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  image: { height: "100%", width: "100%" },
+  content: {
+    height: "40%",
+  },
+  content_title: {
+    color: "#0190f3",
+    fontWeight: "bold",
+    fontSize: 50,
+    textAlign: "center",
+    marginTop: 8,
+  },
+  button_container: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 24,
+  },
+  button: { marginBottom: 8, paddingVertical: 4 },
+  login: {
+    backgroundColor: "#0190f3",
+  },
+  register: {
+    backgroundColor: "gray",
   },
 });

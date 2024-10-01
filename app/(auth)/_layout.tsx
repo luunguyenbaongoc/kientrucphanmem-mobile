@@ -34,10 +34,11 @@ export default function AuthLayout() {
   }
 
   return (
-    <Stack screenOptions={{headerShown: false}}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="register" />
-      <Stack.Screen name="forgot-password" />
+    <Stack>
+      <Stack.Screen options={{headerShown: false}} name="index" />
+      <Stack.Screen options={{headerTitle: 'Đăng nhập'}} name="login" />
+      <Stack.Screen options={{headerTitle: 'Đăng ký'}} name="register" />
+      <Stack.Screen options={{headerTitle: 'Quên mật khẩu'}} name="forgot-password" />
     </Stack>
   );
 }
