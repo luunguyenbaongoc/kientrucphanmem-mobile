@@ -1,41 +1,73 @@
-import { StyleSheet } from "react-native";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { router } from "expo-router";
+import { Image, StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
-import { Button } from "react-native-paper";
-
-export default function LoginScreen() {
+export default function AuthRootScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <Button
-        mode="contained"
-        onPress={() => console.log("Pressed")}
-      >
-        Login
-      </Button>
+      <View style={styles.image_container}>
+        <Image
+          style={styles.image}
+          source={require("@/assets/images/unauth-cover.jpg")}
+          resizeMode="cover"
+        ></Image>
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.content_title}>Zola</Text>
+        <View style={styles.button_container}>
+          <Button
+            textColor="white"
+            style={[styles.login, styles.button]}
+            onPress={() => {
+              router.navigate("./login");
+            }}
+          >
+            Đăng nhập
+          </Button>
+          <Button
+            textColor="white"
+            style={[styles.register, styles.button]}
+            onPress={() => {
+              router.navigate("./register");
+            }}
+          >
+            Tạo tài khoản mới
+          </Button>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    height: "100%",
   },
-  title: {
-    fontSize: 20,
+  image_container: {
+    height: "60%",
+  },
+  image: { height: "100%", width: "100%" },
+  content: {
+    height: "40%",
+  },
+  content_title: {
+    color: "#0190f3",
     fontWeight: "bold",
+    fontSize: 50,
+    textAlign: "center",
+    marginTop: 8,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  button_container: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 24,
+  },
+  button: { marginBottom: 8, paddingVertical: 4 },
+  login: {
+    backgroundColor: "#0190f3",
+  },
+  register: {
+    backgroundColor: "gray",
   },
 });
