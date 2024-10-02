@@ -41,7 +41,7 @@ const FriendListSreen = () => {
           avatar={item.avatar}
           onPress={() => {
             router.push({
-              pathname: "./dialog",
+              pathname: "/(chatbox)",
               params: { userId: item.id, name: item.name },
             });
           }}
