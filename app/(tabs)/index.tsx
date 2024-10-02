@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Searchbar } from 'react-native-paper';
 
 const data = [
   { id: '1', name: 'John Doe', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
@@ -25,6 +26,14 @@ const ListItem = ({ name, avatar, onPress }: ListItemProps) => (
 
 const FriendListSreen = () => {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const handleSearchFriend = (text: string) => {
+    // TODO: Implement search logic
+    console.log('Search:', text);
+    // Replace with actual search logic when ready
+    setSearchQuery(text);
+  };
 
   useEffect(() => {
     // Add any cleanup logic here, such as subscriptions or timers
@@ -32,26 +41,36 @@ const FriendListSreen = () => {
   })
 
   return (
-    <FlatList
-      data={data}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <ListItem
-          name={item.name}
-          avatar={item.avatar}
-          onPress={() => {
-            router.push({
-              pathname: "/(chatbox)",
-              params: { userId: item.id, name: item.name },
-            });
-          }}
-        />
-      )}
-    />
+    <View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={handleSearchFriend}
+        value={searchQuery}
+      />
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ListItem
+            name={item.name}
+            avatar={item.avatar}
+            onPress={() => {
+              router.push({
+                pathname: "/(chatbox)",
+                params: { userId: item.id, name: item.name },
+              });
+            }}
+          />
+        )}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  searchBar: {
+    padding: 10
+  },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',

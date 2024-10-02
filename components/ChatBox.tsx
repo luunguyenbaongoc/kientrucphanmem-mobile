@@ -1,21 +1,20 @@
 import React, { useState, useCallback } from 'react';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 
-export default function Chatbox() {
+export function Chatbox() {
   const [messages, setMessages] = useState<IMessage[]>([]);
 
-  // Set initial message
   React.useEffect(() => {
     setMessages([
       {
         _id: 1,
-        text: 'Hello! How can I help you today?',
+        text: 'Hãy gửi lời chào tới bạn bè!',
         createdAt: new Date(),
         user: {
           _id: 2,
-          name: 'Chatbot',
-          avatar: 'https://placeimg.com/140/140/any', // Placeholder avatar
-        },
+          name: 'Quản trị viên',
+          avatar: 'https://placeimg.com/140/140/any'
+        }
       },
     ]);
   }, []);
@@ -32,7 +31,7 @@ export default function Chatbox() {
       messages={messages}
       onSend={(messages) => onSend(messages)}
       user={{
-        _id: 1, // Current user id
+        _id: 2
       }}
       placeholder="Type a message..."
       showUserAvatar={true}
