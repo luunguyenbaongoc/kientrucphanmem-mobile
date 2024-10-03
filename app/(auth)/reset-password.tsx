@@ -1,27 +1,19 @@
 import React from "react";
-import { Link } from "expo-router";
 import { Button, TextInput } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
+import { router } from "expo-router";
 
-export default function RegisterScreen() {
-  const [phone, setPhone] = React.useState("");
+export default function ResetPasswordScreen() {
   const [password, setPassword] = React.useState("");
   const [isPassIdentical, setIsPassIdentical] = React.useState(false);
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
 
-  const handleRegister = () => {
+  const handleRequestChangePassword = () => {
     // TODO: Implement login logic
-    console.log("Login with phone: ", phone, " and password: ", password);
     // Replace with actual login logic when ready
-  };
-
-  const checkValidPhoneNumber = (phone: string) => {
-    //TODO: Implement phone number validation logic
     if (true) {
-      setPhone(phone);
+        router.navigate("./login");
     }
   };
 
@@ -49,14 +41,6 @@ export default function RegisterScreen() {
       <ThemedView style={styles.stepContainer}>
         <TextInput
           mode="outlined"
-          label="Số điện thoại"
-          placeholder="Nhập số điện thoại"
-          value={phone}
-          autoFocus
-          onChangeText={checkValidPhoneNumber}
-        />
-        <TextInput
-          mode="outlined"
           label="Mật khẩu"
           placeholder="Nhập mật khẩu"
           secureTextEntry={true}
@@ -71,19 +55,12 @@ export default function RegisterScreen() {
           secureTextEntry={true}
           onChangeText={checkIdenticalConfirmedPass}
         />
-        <TextInput
-          mode="outlined"
-          label="Họ tên"
-          placeholder="Nhập họ tên"
-          value={firstName}
-          onChangeText={(text) => setFirstName(text)}
-        />
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"
-          onPress={handleRegister}
+          onPress={handleRequestChangePassword}
         >
-          Đăng ký
+          Xác nhận
         </Button>
       </ThemedView>
     </ParallaxScrollView>

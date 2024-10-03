@@ -1,70 +1,100 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Searchbar } from 'react-native-paper';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const data = [
+  { id: '1', name: 'John Doe', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
+  { id: '2', name: 'Jane Smith', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
+  { id: '3', name: 'Alice Johnson', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
+];
 
-export default function HomeScreen() {
+interface ListItemProps {
+  name: string;
+  avatar: string;
+  onPress: () => void;
+};
+
+const ListItem = ({ name, avatar, onPress }: ListItemProps) => (
+  <TouchableOpacity onPress={onPress}>
+    <View style={styles.itemContainer}>
+      <Image source={{ uri: avatar }} style={styles.avatar} />
+      <Text style={styles.name}>{name}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+const FriendListSreen = () => {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const handleSearchFriend = (text: string) => {
+    // TODO: Implement search logic
+    console.log('Search:', text);
+    // Replace with actual search logic when ready
+    setSearchQuery(text);
+  };
+
+  useEffect(() => {
+    // Add any cleanup logic here, such as subscriptions or timers
+    // Request getting friend list -> data.
+  })
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={handleSearchFriend}
+        value={searchQuery}
+      />
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ListItem
+            name={item.name}
+            avatar={item.avatar}
+            onPress={() => {
+              router.push({
+                pathname: "/(chatbox)",
+                params: { userId: item.id, name: item.name },
+              });
+            }}
+          />
+        )}
+      />
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  searchBar: {
+    padding: 10
+  },
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  name: {
+    fontSize: 18,
+  },
+  detailContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  detailText: {
+    fontSize: 22,
   },
 });
+
+export default FriendListSreen;

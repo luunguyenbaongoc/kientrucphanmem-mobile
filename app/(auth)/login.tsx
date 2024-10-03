@@ -4,6 +4,7 @@ import { Button, TextInput } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
+import { router } from "expo-router";
 
 export default function LoginScreen() {
   const [phone, setPhone] = React.useState("");
@@ -13,6 +14,7 @@ export default function LoginScreen() {
     // TODO: Implement login logic
     console.log("Login with phone: ", phone, " and password: ", password);
     // Replace with actual login logic when ready
+    router.navigate("/(tabs)/");
   };
 
   return (
@@ -38,6 +40,7 @@ export default function LoginScreen() {
           mode="outlined"
           label="Mật khẩu"
           placeholder="Nhập mật khẩu"
+          secureTextEntry={true}
           value={password}
           onChangeText={(text) => setPassword(text)}
         />

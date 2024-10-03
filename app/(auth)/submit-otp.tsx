@@ -6,12 +6,14 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
 
-export default function ForgotPasswordScreen() {
-  const [phone, setPhone] = React.useState("");
+export default function SubmitOtpScreen() {
+  const [otp, setOpt] = React.useState("");
 
-  function handleSubmitPhoneNumber() {
+  function handleSendOTP() {
     // TODO: Implement login logic
-    router.navigate("./submit-otp");
+    if (true) {
+        router.navigate("./reset-password");
+    }
   }
 
   return (
@@ -25,19 +27,19 @@ export default function ForgotPasswordScreen() {
       }
     >
       <ThemedView style={styles.stepContainer}>
-        <ThemedText>Nhập số điện thoại để lấy lại mật khẩu.</ThemedText>
+        <ThemedText>Nhập mã OTP.</ThemedText>
         <TextInput
           autoFocus
           mode="outlined"
-          label="Số điện thoại"
-          placeholder="Nhập số điện thoại"
-          value={phone}
-          onChangeText={(text) => setPhone(text)}
+          label="OTP"
+          placeholder="Nhập mã OTP"
+          value={otp}
+          onChangeText={(text) => setOpt(text)}
         />
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"
-          onPress={handleSubmitPhoneNumber}
+          onPress={handleSendOTP}
         >
           Gửi
         </Button>
