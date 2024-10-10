@@ -11,7 +11,7 @@ export default function ForgotPasswordScreen() {
 
   function handleSubmitPhoneNumber() {
     // TODO: Implement login logic
-    router.navigate("./submit-otp");
+    router.navigate("./reset-password");
   }
 
   return (

@@ -1,20 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "expo-router";
-import { Button, TextInput } from "react-native-paper";
-import { StyleSheet, Image } from "react-native";
+import { Button, Text, TextInput } from "react-native-paper";
+import { StyleSheet, Image, GestureResponderEvent } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogInDto } from "@/types/api/dto";
+import { STORAGE_KEY } from "@/utils/constants";
+import { useMutation } from "react-query";
+import { authAPI } from "@/api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemedText } from "@/components/ThemedText";
 
 export default function LoginScreen() {
-  const [phone, setPhone] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [loginInfo, setLoginInfo] = useState({
+    phone: "",
+    password: "",
+  } as LogInDto);
+  const [errorText, setErrorText] = useState('');
+  const [errorVisible, setErrorVisible] = useState(false);
+  const { setAccessToken, setUserId } = useAuth();
 
-  const handleLogin = () => {
-    // TODO: Implement login logic
-    console.log("Login with phone: ", phone, " and password: ", password);
-    // Replace with actual login logic when ready
-    router.navigate("/(tabs)/");
+  const login = useMutation(authAPI.login, {
+    onSuccess: async (response) => {
+      const { access_token, refresh_token, user, is_success } = response.data;
+
+      if (is_success) {
+        await AsyncStorage.setItem(STORAGE_KEY.ID, user.id);
+        await AsyncStorage.setItem(STORAGE_KEY.ACCESS_TOKEN, access_token);
+        await AsyncStorage.setItem(STORAGE_KEY.REFRESH_TOKEN, refresh_token);
+
+        setUserId(user.id);
+        setAccessToken(access_token);
+
+        router.navigate("../(tabs)");
+      }
+    },
+    onError: (error: any) => {
+      setError(error.response.data.message);
+      // enqueueSnackbar(error.response.data.message, {
+      //   variant: "error",
+      // });
+    },
+  });
+
+  const setError = (errorMessage: string) => {
+    setErrorText(errorMessage);
+    setErrorVisible(errorMessage !== '');
+  }
+
+  const handleSubmit = (event: GestureResponderEvent) => {
+    event.preventDefault();
+    // login({ variables: { input: loginInfo } });
+    login.mutate(loginInfo);
+  };
+
+  const onFormChangeHandler = (key: string, value: string) => {
+    setLoginInfo((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleChangePhone = (value: string) => {
+    const onlyNums = value.replace(/[^0-9]/g, "");
+    if (onlyNums.length <= 10) {
+      setLoginInfo((prev) => ({ ...prev, phone: onlyNums }));
+    }
   };
 
   return (
@@ -33,21 +83,24 @@ export default function LoginScreen() {
           mode="outlined"
           label="Số điện thoại"
           placeholder="Nhập số điện thoại"
-          value={phone}
-          onChangeText={(text) => setPhone(text)}
+          value={loginInfo.phone}
+          onChangeText={handleChangePhone}
         />
         <TextInput
           mode="outlined"
           label="Mật khẩu"
           placeholder="Nhập mật khẩu"
           secureTextEntry={true}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
+          value={loginInfo.password}
+          onChangeText={(value) => onFormChangeHandler("password", value)}
         />
+        {
+          errorVisible && <ThemedText type='error'>{errorText}</ThemedText>
+        }
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"
-          onPress={handleLogin}
+          onPress={handleSubmit}
         >
           Đăng nhập
         </Button>
