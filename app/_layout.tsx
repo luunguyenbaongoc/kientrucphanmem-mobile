@@ -4,17 +4,19 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { Stack, SplashScreen, router, Redirect } from "expo-router";
+// import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { STORAGE_KEY } from "@/utils/constants";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch((e) => { console.log(e) });;
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -22,12 +24,6 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
 
   if (!loaded) {
     return null;

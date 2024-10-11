@@ -10,29 +10,7 @@ export {
   ErrorBoundary,
 } from "expo-router";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
 export default function DetailMessageLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
-
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <Stack>
       <Stack.Screen options={{headerTitle: 'Nội dung'}} name="index" />

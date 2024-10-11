@@ -52,7 +52,6 @@ export default function LoginScreen() {
 
   const handleSubmit = (event: GestureResponderEvent) => {
     event.preventDefault();
-    // login({ variables: { input: loginInfo } });
     login.mutate(loginInfo);
   };
 

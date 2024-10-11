@@ -1,46 +1,41 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from "@/hooks/useColorScheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { STORAGE_KEY } from "@/utils/constants";
+import { useAuth } from "@/contexts/AuthContext";
 
-export {
-  ErrorBoundary,
-} from "expo-router";
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+export { ErrorBoundary } from "expo-router";
 
 export default function AuthLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
+  const { accessToken } = useAuth();
 
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
+  if (accessToken) {
+    SplashScreen.hideAsync();
+    return <Redirect href="/(tabs)" />;
   }
 
   return (
     <Stack>
-      <Stack.Screen options={{headerShown: false}} name="index" />
-      <Stack.Screen options={{headerTitle: 'Đăng nhập'}} name="login" />
-      <Stack.Screen options={{headerTitle: 'Đăng ký'}} name="register" />
-      <Stack.Screen options={{headerTitle: 'Quên mật khẩu'}} name="forgot-password" />
-      <Stack.Screen options={{headerTitle: 'Xác nhận OTP'}} name="submit-otp" />
-      <Stack.Screen options={{headerTitle: 'Nhập mật khẩu mới'}} name="reset-password" />
+      <Stack.Screen options={{ headerShown: false }} name="index" />
+      <Stack.Screen options={{ headerTitle: "Đăng nhập" }} name="login" />
+      <Stack.Screen options={{ headerTitle: "Đăng ký" }} name="register" />
+      <Stack.Screen
+        options={{ headerTitle: "Quên mật khẩu" }}
+        name="forgot-password"
+      />
+      <Stack.Screen
+        options={{ headerTitle: "Xác nhận OTP" }}
+        name="submit-otp"
+      />
+      <Stack.Screen
+        options={{ headerTitle: "Nhập mật khẩu mới" }}
+        name="reset-password"
+      />
     </Stack>
   );
 }
