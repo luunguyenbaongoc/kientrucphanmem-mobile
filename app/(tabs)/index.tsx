@@ -2,11 +2,17 @@ import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Searchbar } from 'react-native-paper';
+import { DropDownMenu } from '@/components/Menu';
 
 const data = [
   { id: '1', name: 'John Doe', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
   { id: '2', name: 'Jane Smith', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
   { id: '3', name: 'Alice Johnson', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
+];
+
+const TOOL_MENU_ITEMS = [
+  { title: 'Tạo nhóm', url: "/groups/group"},
+  { title: 'Thêm bạn', url: "/user/add-friend" },
 ];
 
 interface ListItemProps {
@@ -42,11 +48,15 @@ const FriendListSreen = () => {
 
   return (
     <View>
-      <Searchbar
-        placeholder="Search"
-        onChangeText={handleSearchFriend}
-        value={searchQuery}
-      />
+      <View style={styles.toolContainer}>
+        <Searchbar
+          placeholder="Search"
+          onChangeText={handleSearchFriend}
+          value={searchQuery}
+          style={styles.searchBar}
+        />
+        <DropDownMenu items={TOOL_MENU_ITEMS}/>
+      </View>
       <FlatList
         data={data}
         keyExtractor={(item) => item.id}
@@ -69,7 +79,14 @@ const FriendListSreen = () => {
 
 const styles = StyleSheet.create({
   searchBar: {
-    padding: 10
+    flex: 1,
+    marginRight: 10,
+  },
+  toolContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
   },
   itemContainer: {
     flexDirection: 'row',
