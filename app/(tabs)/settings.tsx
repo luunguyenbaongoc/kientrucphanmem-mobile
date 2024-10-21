@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  Image, 
+  TouchableOpacity, 
+  StyleSheet
+} from 'react-native';
 import { Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useMutation, useQuery } from 'react-query';
@@ -8,11 +15,12 @@ import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEY } from '@/utils/constants';
 import { LogOutDto } from '@/types/api/dto';
+import { userAPI } from '@/api/user.api';
+import { ProfileResponse } from '@/types/api/response/profile.response';
 
 const SettingsScreen = () => {
-  const [profileInfo, setProfileInfo] = React.useState({ name: "", phone: "", profileImage: "" });
+  const [profileInfo, setProfileInfo] = React.useState<ProfileResponse>({ fullname: "", avatar: undefined, id: "" });
 
-  // Function to handle profile image change
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -22,35 +30,52 @@ const SettingsScreen = () => {
     });
 
     if (!result.canceled) {
-      setProfileInfo({...profileInfo});
+      const formData = new FormData();
+      const { fileName, uri } = result.assets[0] as { fileName: string, uri: string };
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      formData.append('file', blob, fileName);
+      uploadAvatar.mutate({profileId: profileInfo.id, formData: formData});
     }
   };
 
-  // Function to save user information
   const saveSettings = () => {
+    updateProfile.mutate({profileId: profileInfo.id, fullname: profileInfo.fullname})
   };
 
-  // useQuery(
-  //   ['getUserProfile', registerInfo.phone], 
-  //   () => authAPI.checkUserExist(registerInfo.phone), 
-  //   {
-  //     enabled: registerInfo.phone.length > 0,
-  //     onSuccess: async (response) => {
-  //       const exist: boolean = response.data;
-  //       if (exist) {
-  //         setErrorText("Số điện thoại đã tồn tại!");
-  //         setErrorVisible(true);
-  //       }
-  //       else {
-  //         setErrorText("");
-  //         setErrorVisible(false);
-  //       }
-  //     },
-  //     onError: (error: any) => {
-  //       setErrorText(error.message);
-  //     },
-  //   },
-  // );
+  useQuery(
+    ['getMyProfile', profileInfo.id], 
+    () => userAPI.getMyProfile(),
+    {
+      onSuccess: async (response) => {
+        const profiles: ProfileResponse[] = response.data;
+        setProfileInfo({...profileInfo, ...profiles[0]});
+      },
+      onError: (error: any) => {
+        console.log(error);
+      },
+    },
+  );
+  
+  const uploadAvatar = useMutation(userAPI.uploadAvatar, {
+    onSuccess: async (response) => {
+      const profile: ProfileResponse = response.data;
+      setProfileInfo({...profileInfo,...profile});
+    },
+    onError: (error: any) => {
+      console.log(error);
+    },
+  })
+
+  const updateProfile = useMutation(userAPI.updateProfile, {
+    onSuccess: async (response) => {
+      const profile: ProfileResponse = response.data;
+      setProfileInfo({...profileInfo,...profile});
+    },
+    onError: (error: any) => {
+      console.log(error);
+    },
+  })
 
   const logout = useMutation(authAPI.logout, {
     onSuccess: async (response) => {
@@ -81,25 +106,18 @@ const SettingsScreen = () => {
       
       <TouchableOpacity onPress={pickImage}>
         <Image
-          source={profileInfo.profileImage ? { uri: profileInfo.profileImage } : require('../../assets/images/icon.png')}
+          source={profileInfo.avatar ? { 
+            uri: `${STORAGE_KEY.BASE_URL}/${profileInfo.avatar}` } : require('../../assets/images/icon.png')}
           style={styles.profileImage}
         />
-        <Text style={styles.changePhotoText}>Change Profile Photo</Text>
+        <Text style={styles.changePhotoText}>Thay đổi ảnh đại diện</Text>
       </TouchableOpacity>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Name</Text>
+        <Text style={styles.label}>Họ và tên</Text>
         <TextInput
-          value={"name"}
-          // onChangeText={}
-          style={styles.input}
-        />
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          value={"phone"}
+          value={profileInfo.fullname}
+          onChangeText={(value: string) => setProfileInfo({...profileInfo, fullname: value })}
           style={styles.input}
         />
       </View>
