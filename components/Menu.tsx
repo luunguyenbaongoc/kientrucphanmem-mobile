@@ -1,12 +1,8 @@
 import * as React from "react";
 import { View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import {
   Menu,
   IconButton,
-  PaperProvider,
-  Button,
-  Divider,
   Provider,
 } from "react-native-paper";
 
@@ -38,7 +34,6 @@ export const DropDownMenu = ({ items, ...rests }: MenuProps) => {
               zIndex: 100,
               width: 150,
               justifyContent: "flex-end",
-              // backgroundColor: "#222",
             }}
             visible={visible}
             onDismiss={closeMenu}

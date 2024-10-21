@@ -4,7 +4,7 @@ import { StyleSheet, Image, GestureResponderEvent } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { RegisterDto } from "@/types/api/dto";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { authAPI } from "@/api";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
@@ -21,22 +21,27 @@ export default function RegisterScreen() {
   const [errorText, setErrorText] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
 
-  const checkUserExist = useMutation(authAPI.checkUserExist, {
-    onSuccess: async (response) => {
-      const exist: boolean = response.data;
-      if (exist) {
-        setErrorText("Số điện thoại đã tồn tại!");
-        setErrorVisible(true);
-      }
-      else {
-        setErrorText("");
-        setErrorVisible(false);
-      }
+  useQuery(
+    ['checkUserExist', registerInfo.phone], 
+    () => authAPI.checkUserExist(registerInfo.phone), 
+    {
+      enabled: registerInfo.phone.length > 0,
+      onSuccess: async (response) => {
+        const exist: boolean = response.data;
+        if (exist) {
+          setErrorText("Số điện thoại đã tồn tại!");
+          setErrorVisible(true);
+        }
+        else {
+          setErrorText("");
+          setErrorVisible(false);
+        }
+      },
+      onError: (error: any) => {
+        setErrorText(error.message);
+      },
     },
-    onError: (error: any) => {
-      setErrorText(error.message);
-    },
-  });
+  );
 
   const register = useMutation(authAPI.register, {
     onSuccess: async (response) => {
@@ -99,9 +104,6 @@ export default function RegisterScreen() {
           value={registerInfo.phone}
           autoFocus
           onChangeText={handleChangePhone}
-          onBlur={() => {
-            checkUserExist.mutate(registerInfo.phone);
-          }}
         />
         <TextInput
           mode="outlined"
