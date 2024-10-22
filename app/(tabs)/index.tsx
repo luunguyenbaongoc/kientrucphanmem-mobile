@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { Searchbar } from 'react-native-paper';
 import { DropDownMenu } from '@/components/Menu';
 
@@ -11,7 +11,9 @@ const data = [
 ];
 
 const TOOL_MENU_ITEMS = [
-  { title: 'Tạo nhóm', url: "/groups/group"},
+  { title: 'Tạo nhóm', url: "/groups/group", onPress: () => {
+    router.navigate('/(chatbox)/create-group');
+  }},
   { title: 'Thêm bạn', url: "/user/add-friend" },
 ];
 

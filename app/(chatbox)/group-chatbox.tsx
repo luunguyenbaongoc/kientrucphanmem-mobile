@@ -4,22 +4,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { Chatbox } from '@/components/ChatBox';
 
-const UserChatBoxScreen = () => {
-  const { userId, name } = useLocalSearchParams();
-  const [avatar, setAvatar] = React.useState('');
-
-  useEffect(() => {
-    // Fetch user avatar from server based on userId
-    // const avatar = await fetchUserAvatar(userId);
-    // Set avatar in state or props
-    const url = "https://avatar.iran.liara.run/public/boy?username=Ash"
-    setAvatar(url);
-  })
+const GroupChatBoxScreen = () => {
+  const { groupName } = useLocalSearchParams();
 
   return (
     <View style={styles.detailContainer}>
-      <Image source={{ uri: avatar }} style={styles.avatar} />
-      <Text style={styles.detailText}>{name}</Text>
+      <Text style={styles.detailText}>{groupName}</Text>
       <View style={styles.phoneCall}>
         <IconButton
           icon="phone"
@@ -71,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserChatBoxScreen;
+export default GroupChatBoxScreen;

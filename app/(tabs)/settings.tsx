@@ -102,7 +102,7 @@ const SettingsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+      <Text style={styles.header}>Cài đặt</Text>
       
       <TouchableOpacity onPress={pickImage}>
         <Image
