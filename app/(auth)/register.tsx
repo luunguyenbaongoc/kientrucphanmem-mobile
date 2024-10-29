@@ -1,39 +1,89 @@
-import React from "react";
-import { Link } from "expo-router";
+import React, { useState } from "react";
 import { Button, TextInput } from "react-native-paper";
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet, Image, GestureResponderEvent } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
+import { RegisterDto } from "@/types/api/dto";
+import { useMutation, useQuery } from "react-query";
+import { authAPI } from "@/api";
+import { ThemedText } from "@/components/ThemedText";
+import { router } from "expo-router";
 
 export default function RegisterScreen() {
-  const [phone, setPhone] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [isPassIdentical, setIsPassIdentical] = React.useState(false);
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
 
-  const handleRegister = () => {
-    // TODO: Implement login logic
-    console.log("Login with phone: ", phone, " and password: ", password);
-    // Replace with actual login logic when ready
-  };
+  const [registerInfo, setRegisterInfo] = useState({
+    phone: "",
+    password: "",
+    fullname: "",
+  } as RegisterDto);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const checkValidPhoneNumber = (phone: string) => {
-    //TODO: Implement phone number validation logic
-    if (true) {
-      setPhone(phone);
+  const [errorText, setErrorText] = useState('');
+  const [errorVisible, setErrorVisible] = useState(false);
+
+  useQuery(
+    ['checkUserExist', registerInfo.phone], 
+    () => authAPI.checkUserExist(registerInfo.phone), 
+    {
+      enabled: registerInfo.phone.length > 0,
+      onSuccess: async (response) => {
+        const exist: boolean = response.data;
+        if (exist) {
+          setErrorText("Số điện thoại đã tồn tại!");
+          setErrorVisible(true);
+        }
+        else {
+          setErrorText("");
+          setErrorVisible(false);
+        }
+      },
+      onError: (error: any) => {
+        setErrorText(error.message);
+      },
+    },
+  );
+
+  const register = useMutation(authAPI.register, {
+    onSuccess: async (response) => {
+      const { is_success } = response.data;
+      if (is_success) {
+        router.navigate("./login");
+      }
+    },
+    onError: (error: any) => {
+      setErrorText(error.response.data.message);
+      router.navigate("./register");
+    },
+  });
+
+  const handleRegister = (event: GestureResponderEvent) => {
+    event.preventDefault();
+    if (!errorVisible) {
+      register.mutate(registerInfo);
     }
   };
 
-  const checkValidPassword = (password: string) => {
-    // TODO: Implement password validation logic
-    if (true) {
-      setPassword(password);
+  const checkIdenticalConfirmedPass = (password: string) => {
+    setConfirmPassword(password);
+    if (password !== registerInfo.password) {
+      setErrorText("Mật khẩu không trùng khớp!");
+      setErrorVisible(true);
+    }
+    else {
+      setErrorText("");
+      setErrorVisible(false);
     }
   };
 
-  const checkIdenticalConfirmedPass = (pass: string) => {
-    setIsPassIdentical(pass === password);
+  const onFormChangeHandler = (key: string, value: string) => {
+    setRegisterInfo((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleChangePhone = (value: string) => {
+    const onlyNums = value.replace(/[^0-9]/g, "");
+    if (onlyNums.length <= 10) {
+      setRegisterInfo((prev) => ({ ...prev, phone: onlyNums }));
+    }
   };
 
   return (
@@ -51,33 +101,36 @@ export default function RegisterScreen() {
           mode="outlined"
           label="Số điện thoại"
           placeholder="Nhập số điện thoại"
-          value={phone}
+          value={registerInfo.phone}
           autoFocus
-          onChangeText={checkValidPhoneNumber}
+          onChangeText={handleChangePhone}
         />
         <TextInput
           mode="outlined"
           label="Mật khẩu"
           placeholder="Nhập mật khẩu"
           secureTextEntry={true}
-          value={password}
-          onChangeText={checkValidPassword}
+          value={registerInfo.password}
+          onChangeText={(value) => onFormChangeHandler("password", value)}
         />
         <TextInput
           mode="outlined"
-          // error={!isPassIdentical}
           label="Xác nhận mật khẩu"
           placeholder="Nhập lại mật khẩu"
           secureTextEntry={true}
+          value={confirmPassword}
           onChangeText={checkIdenticalConfirmedPass}
         />
         <TextInput
           mode="outlined"
-          label="Họ tên"
+          label="Họ và tên"
           placeholder="Nhập họ tên"
-          value={firstName}
-          onChangeText={(text) => setFirstName(text)}
+          value={registerInfo.fullname}
+          onChangeText={(value) => onFormChangeHandler("fullname", value)}
         />
+        {
+          errorVisible && <ThemedText type='error'>{errorText}</ThemedText>
+        }
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"
