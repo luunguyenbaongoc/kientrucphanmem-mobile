@@ -23,6 +23,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="contacts"
+        options={{
+          title: 'Danh bạ',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'contract' : 'contract-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Cài đặt',
