@@ -14,18 +14,13 @@ const CreateGroupScreen = () => {
   const [name, setName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
 
-  const handleCreateGroup = () => {
-    createGroup.mutate({ name });
-    router.push({
-      pathname: "/(chatbox)/group-chatbox",
-      params: { groupName: name },
-    });
-  }
-
   const createGroup = useMutation(groupAPI.createGroup, {
     onSuccess: (response) => {
-      const { name, group_lead: { id } } = response.data;
-      console.log('Group created successfully', response);
+      const { name } = response.data;
+      router.push({
+        pathname: "/(chatbox)/group-chatbox",
+        params: { groupName: name },
+      });
     },
     onError: (error) => {
       console.error('Error creating group', error);
@@ -49,7 +44,9 @@ const CreateGroupScreen = () => {
         onChangeText={setGroupDescription}
         multiline
       />
-      <Button title="Tạo nhóm" onPress={handleCreateGroup} />
+      <Button title="Tạo nhóm" onPress={() => {
+        createGroup.mutate({ name });
+      }} />
     </View>
   );
 };

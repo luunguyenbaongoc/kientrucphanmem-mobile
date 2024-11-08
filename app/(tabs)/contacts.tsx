@@ -5,8 +5,9 @@ import { IconButton } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useQuery } from 'react-query';
 import { groupAPI } from '@/api/group.api';
-import { FriendResponse, GroupResponse } from '@/types/api/response';
+import { FriendResponse } from '@/types/api/response';
 import { friendAPI } from '@/api/friend.api';
+import { GroupMemberInfoResponse, GroupMemberResponse } from '@/types/api/response/group.member.response';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -76,7 +77,7 @@ const FriendsScreen = () => {
 
 // Groups Screen
 const GroupsScreen = () => {
-  const [groups, setGroups] = React.useState<GroupResponse[]>([]);
+  const [groups, setGroups] = React.useState<GroupMemberInfoResponse[]>([]);
   const handleCallPress = (type: string) => {
     console.log(`Making ${type} call`);
   };
@@ -86,8 +87,8 @@ const GroupsScreen = () => {
     () => groupAPI.getGroups(),
     {
       onSuccess: async (response) => {
-        const currentGroups: GroupResponse[] = response.data;
-        setGroups(currentGroups);
+        const { groups: groups }: GroupMemberResponse= response.data;
+        setGroups(groups);
       },
       onError: (error: any) => {
         console.log(error);
@@ -98,9 +99,9 @@ const GroupsScreen = () => {
   return (
     <FlatList
       data={groups}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.group_id}
       renderItem={({ item }) => (
-        <RenderItem name={item.name} userId={item.id}  onCallPress={handleCallPress} />
+        <RenderItem name={item.group_id} userId={item.user_id}  onCallPress={handleCallPress} />
       )}
     />
   );
