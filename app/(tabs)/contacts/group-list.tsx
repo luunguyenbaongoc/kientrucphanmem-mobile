@@ -1,14 +1,11 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { Button, IconButton } from 'react-native-paper';
-import { Link, router } from 'expo-router';
+import { IconButton } from 'react-native-paper';
+import { router } from 'expo-router';
 import { useQuery } from 'react-query';
-import { FriendResponse } from '@/types/api/response';
-import { friendAPI } from '@/api/friend.api';
-import { FriendRequestResponse } from '@/types/api/response/friend-request.response';
+import { groupAPI } from '@/api/group.api';
+import { GroupMemberInfoResponse, GroupMemberResponse } from '@/types/api/response/group.member.response';
 
-const Tab = createMaterialTopTabNavigator();
 
 const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
   <View style={styles.itemContainer}>
@@ -42,19 +39,20 @@ const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
   </View>
 );
 
-const FriendRequestListTab = () => {
-  const [friendRequests, setFriendRequests] = React.useState<FriendRequestResponse[]>([]);
+
+const GroupListScreen = () => {
+  const [groups, setGroups] = React.useState<GroupMemberInfoResponse[]>([]);
   const handleCallPress = (type: string) => {
     console.log(`Making ${type} call`);
   };
 
   useQuery(
-    ['getFriendRequestsReceived'], 
-    () => friendAPI.getFriendRequestsReceived(),
+    ['getGroups'], 
+    () => groupAPI.getGroups(),
     {
       onSuccess: async (response) => {
-        const friendRequests: FriendRequestResponse[] = response.data;
-        setFriendRequests(friendRequests);
+        const { groups: groups }: GroupMemberResponse= response.data;
+        setGroups(groups);
       },
       onError: (error: any) => {
         console.log(error);
@@ -64,26 +62,14 @@ const FriendRequestListTab = () => {
 
   return (
     <FlatList
-      data={friendRequests}
-      keyExtractor={(item) => item.id}
+      data={groups}
+      keyExtractor={(item) => item.group_id}
       renderItem={({ item }) => (
-        <View>
-          <RenderItem name={item.from_user} userId={item.id} onCallPress={handleCallPress} />
-          <Button>Đồng ý</Button>
-        </View>
+        <RenderItem name={item.group.name} userId={item.user_id}  onCallPress={handleCallPress} />
       )}
     />
   );
 };
-
-export default function FriendRequestScreen() {
-  return (
-      <Tab.Navigator>
-        <Tab.Screen name="Đã nhận" component={FriendRequestListTab} />
-        <Tab.Screen name="Đã gửi" component={FriendRequestListTab} />
-      </Tab.Navigator>
-  );
-}
 
 interface ItemInfo {
   userId: string;
@@ -114,5 +100,12 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     marginRight: 5,
+  },
+  link: {
+    padding: 10,
+    justifyContent: 'center',
+    color: 'black'
   }
 });
+
+export default GroupListScreen;
