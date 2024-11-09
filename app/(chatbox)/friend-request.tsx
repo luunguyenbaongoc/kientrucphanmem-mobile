@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { IconButton } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { Link, router } from 'expo-router';
 import { useQuery } from 'react-query';
 import { FriendResponse } from '@/types/api/response';
 import { friendAPI } from '@/api/friend.api';
+import { FriendRequestResponse } from '@/types/api/response/friend-request.response';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -42,18 +43,18 @@ const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
 );
 
 const FriendRequestListTab = () => {
-  const [friends, setFriends] = React.useState<FriendResponse[]>([]);
+  const [friendRequests, setFriendRequests] = React.useState<FriendRequestResponse[]>([]);
   const handleCallPress = (type: string) => {
     console.log(`Making ${type} call`);
   };
 
   useQuery(
-    ['getFriends'], 
-    () => friendAPI.getFriends(),
+    ['getFriendRequestsReceived'], 
+    () => friendAPI.getFriendRequestsReceived(),
     {
       onSuccess: async (response) => {
-        const currentFriends: FriendResponse[] = response.data;
-        setFriends(currentFriends);
+        const friendRequests: FriendRequestResponse[] = response.data;
+        setFriendRequests(friendRequests);
       },
       onError: (error: any) => {
         console.log(error);
@@ -63,10 +64,13 @@ const FriendRequestListTab = () => {
 
   return (
     <FlatList
-      data={friends}
+      data={friendRequests}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <RenderItem name={item.to_user} userId={item.id} onCallPress={handleCallPress} />
+        <View>
+          <RenderItem name={item.from_user} userId={item.id} onCallPress={handleCallPress} />
+          <Button>Đồng ý</Button>
+        </View>
       )}
     />
   );
