@@ -11,10 +11,18 @@ const data = [
 ];
 
 const TOOL_MENU_ITEMS = [
-  { title: 'Tạo nhóm', url: "/groups/group", onPress: () => {
-    router.navigate('/(chatbox)/create-group');
-  }},
-  { title: 'Thêm bạn', url: "/user/add-friend" },
+  { 
+    title: 'Tạo nhóm', 
+    onPress: () => {
+      router.navigate('/(chatbox)/create-group');
+    }
+  },
+  { 
+    title: 'Thêm bạn', 
+    onPress: () => {
+      router.navigate('/(chatbox)/add-friend');
+    }
+  },
 ];
 
 interface ListItemProps {

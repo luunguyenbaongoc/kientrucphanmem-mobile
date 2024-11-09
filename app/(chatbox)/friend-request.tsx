@@ -1,13 +1,11 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { Button, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { Link, router } from 'expo-router';
 import { useQuery } from 'react-query';
-import { groupAPI } from '@/api/group.api';
 import { FriendResponse } from '@/types/api/response';
 import { friendAPI } from '@/api/friend.api';
-import { GroupMemberInfoResponse, GroupMemberResponse } from '@/types/api/response/group.member.response';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -43,8 +41,7 @@ const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
   </View>
 );
 
-// Friends Screen
-const FriendsScreen = () => {
+const FriendRequestListTab = () => {
   const [friends, setFriends] = React.useState<FriendResponse[]>([]);
   const handleCallPress = (type: string) => {
     console.log(`Making ${type} call`);
@@ -65,61 +62,21 @@ const FriendsScreen = () => {
   );
 
   return (
-    <View>
-      <Link
-        href="/(chatbox)/friend-request"
-        style={styles.link}
-      >
-        Lời mời kết bạn
-      </Link>
-      <FlatList
-        data={friends}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <RenderItem name={item.to_user} userId={item.id} onCallPress={handleCallPress} />
-        )}
-      />
-    </View>
-  );
-};
-
-// Groups Screen
-const GroupsScreen = () => {
-  const [groups, setGroups] = React.useState<GroupMemberInfoResponse[]>([]);
-  const handleCallPress = (type: string) => {
-    console.log(`Making ${type} call`);
-  };
-
-  useQuery(
-    ['getGroups'], 
-    () => groupAPI.getGroups(),
-    {
-      onSuccess: async (response) => {
-        const { groups: groups }: GroupMemberResponse= response.data;
-        setGroups(groups);
-      },
-      onError: (error: any) => {
-        console.log(error);
-      },
-    },
-  );
-
-  return (
     <FlatList
-      data={groups}
-      keyExtractor={(item) => item.group_id}
+      data={friends}
+      keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <RenderItem name={item.group.name} userId={item.user_id}  onCallPress={handleCallPress} />
+        <RenderItem name={item.to_user} userId={item.id} onCallPress={handleCallPress} />
       )}
     />
   );
 };
 
-export default function ContactsScreen() {
+export default function FriendRequestScreen() {
   return (
       <Tab.Navigator>
-        <Tab.Screen name="Bạn bè" component={FriendsScreen} />
-        <Tab.Screen name="Nhóm" component={GroupsScreen} />
+        <Tab.Screen name="Đã nhận" component={FriendRequestListTab} />
+        <Tab.Screen name="Đã gửi" component={FriendRequestListTab} />
       </Tab.Navigator>
   );
 }
@@ -130,7 +87,6 @@ interface ItemInfo {
   onCallPress: (name: string) => void;
 };
 
-// Styles
 const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
@@ -154,10 +110,5 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     marginRight: 5,
-  },
-  link: {
-    padding: 10,
-    justifyContent: 'center',
-    color: 'black'
   }
 });
