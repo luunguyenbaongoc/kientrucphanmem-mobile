@@ -5,3 +5,4 @@ export * from './logout.dto';
 export * from './upload-image.dto';
 export * from './update-profile.dto';
 export * from './create-group.dto';
+export * from './make-request.dto';

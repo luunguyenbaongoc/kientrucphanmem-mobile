@@ -11,7 +11,7 @@ import { GroupMemberInfoResponse, GroupMemberResponse } from '@/types/api/respon
 
 const Tab = createMaterialTopTabNavigator();
 
-const RenderItem = ({ userId, name, onCallPress }: {userId: string, name: string, onCallPress: (name: string) => void}) => (
+const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
   <View style={styles.itemContainer}>
     <TouchableOpacity style={styles.iconContainer} onPress={() => {
         router.push({
@@ -101,7 +101,7 @@ const GroupsScreen = () => {
       data={groups}
       keyExtractor={(item) => item.group_id}
       renderItem={({ item }) => (
-        <RenderItem name={item.group_id} userId={item.user_id}  onCallPress={handleCallPress} />
+        <RenderItem name={item.group.name} userId={item.user_id}  onCallPress={handleCallPress} />
       )}
     />
   );
@@ -115,6 +115,12 @@ export default function ContactsScreen() {
       </Tab.Navigator>
   );
 }
+
+interface ItemInfo {
+  userId: string;
+  name: string;
+  onCallPress: (name: string) => void;
+};
 
 // Styles
 const styles = StyleSheet.create({
