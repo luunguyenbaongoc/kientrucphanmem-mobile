@@ -1,22 +1,18 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useFonts } from "expo-font";
 import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { STORAGE_KEY } from "@/utils/constants";
 import { useAuth } from "@/contexts/AuthContext";
 
 export { ErrorBoundary } from "expo-router";
 
 export default function AuthLayout() {
   const { accessToken } = useAuth();
-
+  console.log(accessToken)
   if (accessToken) {
     SplashScreen.hideAsync();
     return <Redirect href="/(tabs)" />;
+  } else {
+    SplashScreen.hideAsync();
   }
 
   return (
