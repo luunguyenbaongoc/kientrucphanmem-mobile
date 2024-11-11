@@ -1,4 +1,3 @@
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
