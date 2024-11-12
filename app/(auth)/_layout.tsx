@@ -7,7 +7,7 @@ export { ErrorBoundary } from "expo-router";
 
 export default function AuthLayout() {
   const { accessToken } = useAuth();
-  console.log(accessToken)
+  
   if (accessToken) {
     SplashScreen.hideAsync();
     return <Redirect href="/(tabs)" />;

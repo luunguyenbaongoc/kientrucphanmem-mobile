@@ -7,13 +7,13 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { ActivityIndicator, IconButton } from "react-native-paper";
+import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
 import { Link, router } from "expo-router";
 import { useQuery } from "react-query";
 import { FriendResponse } from "@/types/api/response";
 import { friendAPI } from "@/api/friend.api";
 
-const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
+const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => (
   <View style={styles.itemContainer}>
     <TouchableOpacity
       style={styles.iconContainer}
@@ -54,6 +54,7 @@ const RenderItem = ({ userId, name, onCallPress }: ItemInfo) => (
 );
 
 const FriendListScreen = () => {
+  const [searchQuery, setSearchQuery] = React.useState("");
   const handleCallPress = (type: string) => {
     console.log(`Making ${type} call`);
   };
@@ -74,7 +75,15 @@ const FriendListScreen = () => {
   }
 
   return (
-    <View>
+    <View style={styles.container}>
+      <View style={styles.toolContainer}>
+        <Searchbar
+          placeholder="Tìm kiếm"
+          // onChangeText={handleSearchFriend}
+          value={searchQuery}
+          // style={styles.searchBar}
+        />
+      </View>
       <Link href="/(chatbox)/friend-request/" style={styles.link}>
         Lời mời kết bạn
       </Link>
@@ -96,6 +105,7 @@ const FriendListScreen = () => {
 interface ItemInfo {
   userId: string;
   name: string;
+  item?: any;
   onCallPress: (name: string) => void;
 }
 
@@ -128,6 +138,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     color: "black",
   },
+  toolContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+  },
+  container: {
+    // paddingTop: 20
+  }
 });
 
 export default FriendListScreen;
