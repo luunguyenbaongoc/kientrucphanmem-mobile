@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -26,7 +26,7 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => (
     >
       <Image
         source={{
-          uri: "https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg",
+          uri: `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
         }}
         style={styles.avatar}
       />
@@ -59,27 +59,29 @@ const FriendListScreen = () => {
     console.log(`Making ${type} call`);
   };
 
-  const { isLoading, data } = useQuery(
-    ["getFriends"],
-    () => friendAPI.getFriends(),
-    {
-      select: (rs) => {
-        // console.log(rs.data[0].to_user_profile.profile[0])
-        return rs.data;
-      },
-    }
-  );
+  const { isLoading, data, refetch } = useQuery({
+    queryKey: ["findFriendsByText", searchQuery],
+    queryFn: () => friendAPI.findByText({ text: searchQuery }),
+    enabled: true,
+    select: (rs) => {
+      return rs.data;
+    },
+  });
 
-  if (isLoading) {
-    return <ActivityIndicator />;
-  }
+  // if (isLoading) {
+  //   return <ActivityIndicator />;
+  // }
+
+  const handleSearchFriend = (text: string) => {
+    setSearchQuery(text);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.toolContainer}>
         <Searchbar
           placeholder="Tìm kiếm"
-          // onChangeText={handleSearchFriend}
+          onChangeText={handleSearchFriend}
           value={searchQuery}
           // style={styles.searchBar}
         />
@@ -87,17 +89,22 @@ const FriendListScreen = () => {
       <Link href="/(chatbox)/friend-request/" style={styles.link}>
         Lời mời kết bạn
       </Link>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <RenderItem
-            name={item.to_user_profile.profile[0].fullname}
-            userId={item.id}
-            onCallPress={handleCallPress}
-          />
-        )}
-      />
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <RenderItem
+              item={item}
+              name={item.to_user_profile.profile[0].fullname}
+              userId={item.id}
+              onCallPress={handleCallPress}
+            />
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -146,7 +153,7 @@ const styles = StyleSheet.create({
   },
   container: {
     // paddingTop: 20
-  }
+  },
 });
 
 export default FriendListScreen;
