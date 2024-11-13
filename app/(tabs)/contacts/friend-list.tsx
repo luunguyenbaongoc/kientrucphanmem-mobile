@@ -13,45 +13,47 @@ import { useQuery } from "react-query";
 import { FriendResponse } from "@/types/api/response";
 import { friendAPI } from "@/api/friend.api";
 
-const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => (
-  <View style={styles.itemContainer}>
-    <TouchableOpacity
-      style={styles.iconContainer}
-      onPress={() => {
-        router.push({
-          pathname: "/(chatbox)",
-          params: { userId, name },
-        });
-      }}
-    >
-      <Image
-        source={{
-          uri: `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
+const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
+  return (
+    <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => {
+          router.push({
+            pathname: "/(chatbox)",
+            params: { userId, name },
+          });
         }}
-        style={styles.avatar}
-      />
-      <Text style={styles.itemText}>{name}</Text>
-    </TouchableOpacity>
-    <View style={styles.iconContainer}>
-      <TouchableOpacity onPress={() => onCallPress("audio")}>
-        <IconButton
-          icon="phone"
-          size={20}
-          iconColor="blue"
-          onPress={() => {}}
+      >
+        <Image
+          source={{
+            uri: `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
+          }}
+          style={styles.avatar}
         />
+        <Text style={styles.itemText}>{name}</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => onCallPress("video")}>
-        <IconButton
-          icon="video"
-          size={20}
-          iconColor="blue"
-          onPress={() => {}}
-        />
-      </TouchableOpacity>
+      <View style={styles.iconContainer}>
+        <TouchableOpacity onPress={() => onCallPress("audio")}>
+          <IconButton
+            icon="phone"
+            size={20}
+            iconColor="blue"
+            onPress={() => {}}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onCallPress("video")}>
+          <IconButton
+            icon="video"
+            size={20}
+            iconColor="blue"
+            onPress={() => {}}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const FriendListScreen = () => {
   const [searchQuery, setSearchQuery] = React.useState("");

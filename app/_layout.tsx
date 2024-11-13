@@ -11,6 +11,8 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ToastProvider } from "react-native-paper-toast";
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,15 +29,19 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <Stack>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(chatbox)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </QueryClientProvider>
-    </AuthProvider>
+    <PaperProvider theme={DefaultTheme}>
+      <ToastProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <Stack>
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(chatbox)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </QueryClientProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </PaperProvider>
   );
 }

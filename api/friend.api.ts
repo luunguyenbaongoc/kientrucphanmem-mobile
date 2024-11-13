@@ -5,31 +5,45 @@ import { FriendRequestResponse } from "@/types/api/response/friend-request.respo
 import { FindByTextDto } from "@/types/api/dto/friend";
 
 export const FRIEND_URL = {
-  FRIEND: '/friend',
-  FRIEND_REQUEST: '/friend-request',
-  FRIEND_REQUEST_RECEIVED: '/friend-request/list-received',
-  FRIEND_REQUEST_SENT: '/friend-request/list-sent',
-  FIND_BY_TEXT: '/friend/find-by-text'
+  FRIEND: "/friend",
+  FRIEND_REQUEST: "/friend-request",
+  FRIEND_REQUEST_RECEIVED: "/friend-request/list-received",
+  FRIEND_REQUEST_SENT: "/friend-request/list-sent",
+  FIND_BY_TEXT: "/friend/find-by-text",
+  DECLINE_REQUEST: "/friend-request/decline",
+  ACCEPT_REQUEST: "/friend-request/accept",
 };
 
 export const friendAPI = {
   getFriends() {
     return http.get<FriendResponse[]>(FRIEND_URL.FRIEND);
   },
-
   getFriendRequestsReceived() {
-    return http.get<FriendRequestResponse[]>(FRIEND_URL.FRIEND_REQUEST_RECEIVED);
+    return http.get<FriendRequestResponse[]>(
+      FRIEND_URL.FRIEND_REQUEST_RECEIVED
+    );
   },
-
   getFriendRequestsSent() {
     return http.get<FriendRequestResponse[]>(FRIEND_URL.FRIEND_REQUEST_SENT);
   },
-
   sendFriendRequest(makeRequestDto: MakeRequestDto) {
-    return http.post<FriendRequestResponse>(FRIEND_URL.FRIEND_REQUEST, makeRequestDto);
+    return http.post<FriendRequestResponse>(
+      FRIEND_URL.FRIEND_REQUEST,
+      makeRequestDto
+    );
   },
-
   findByText(findByTextDto: FindByTextDto) {
     return http.post<FriendResponse[]>(FRIEND_URL.FIND_BY_TEXT, findByTextDto);
-  }
+  },
+  declineRequest(requestId: string) {
+    return http.get<FriendRequestResponse>(
+      `${FRIEND_URL.DECLINE_REQUEST}/${requestId}`
+    );
+  },
+
+  acceptRequest(requestId: string) {
+    return http.get<FriendRequestResponse>(
+      `${FRIEND_URL.ACCEPT_REQUEST}/${requestId}`
+    );
+  },
 };
