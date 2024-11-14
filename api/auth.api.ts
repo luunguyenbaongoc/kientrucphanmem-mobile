@@ -4,11 +4,11 @@ import { LoginResponse, RegisterResponse } from "../types/api/response";
 import http from "../utils/http";
 
 export const AUTH_URL = {
-  REGISTER: '/auth/register',
-  LOGIN: '/auth/login',
-  LOGOUT: '/auth/logout',
-  REFRESH: '/auth/refresh',
-  CHECK_USER_EXIST: '/auth/check-user-exist',
+  REGISTER: "/auth/register",
+  LOGIN: "/auth/login",
+  LOGOUT: "/auth/logout",
+  REFRESH: "/auth/refresh",
+  CHECK_USER_EXIST: "/auth/check-user-exist",
 };
 
 export const authAPI = {
@@ -19,7 +19,11 @@ export const authAPI = {
     return http.post<LoginResponse>(AUTH_URL.LOGIN, loginDto);
   },
   logout(logOutDto: LogOutDto) {
-    return http.post<boolean>(AUTH_URL.LOGOUT, logOutDto);
+    return http.post<boolean>(AUTH_URL.LOGOUT, logOutDto, {
+      headers: {
+        "refresh_token": logOutDto.refresh_token,
+      },
+    });
   },
   refresh(refreshDto: RefreshDto) {
     return http.post<Token>(AUTH_URL.REFRESH, refreshDto);

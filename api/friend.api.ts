@@ -40,7 +40,6 @@ export const friendAPI = {
       `${FRIEND_URL.DECLINE_REQUEST}/${requestId}`
     );
   },
-
   acceptRequest(requestId: string) {
     return http.get<FriendRequestResponse>(
       `${FRIEND_URL.ACCEPT_REQUEST}/${requestId}`

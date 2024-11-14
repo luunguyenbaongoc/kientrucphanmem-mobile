@@ -13,6 +13,7 @@ export class Http {
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         _retry: true,
       },
     });

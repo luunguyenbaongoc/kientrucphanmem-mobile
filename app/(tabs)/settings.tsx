@@ -17,8 +17,10 @@ import { STORAGE_KEY } from "@/utils/constants";
 import { LogOutDto } from "@/types/api/dto";
 import { userAPI } from "@/api/user.api";
 import { ProfileResponse } from "@/types/api/response/profile.response";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SettingsScreen = () => {
+  const { setAccessToken, setUserId } = useAuth();
   const [profileInfo, setProfileInfo] = React.useState<ProfileResponse>({
     fullname: "",
     avatar: undefined,
@@ -87,7 +89,10 @@ const SettingsScreen = () => {
     onSuccess: async (response) => {
       const succsess: boolean = response.data;
       if (succsess) {
-        router.navigate("../(auth)/login");
+        await AsyncStorage.clear();
+        setAccessToken('');
+        setUserId('');
+        router.navigate("../(auth)");
       }
     },
     onError: (error: any) => {
@@ -101,9 +106,6 @@ const SettingsScreen = () => {
       STORAGE_KEY.REFRESH_TOKEN
     );
     if (userId && refresh_token) {
-      await AsyncStorage.removeItem(STORAGE_KEY.ID);
-      await AsyncStorage.removeItem(STORAGE_KEY.REFRESH_TOKEN);
-      await AsyncStorage.removeItem(STORAGE_KEY.ACCESS_TOKEN);
       logout.mutate({ userId, refresh_token } as unknown as LogOutDto);
     }
   };
