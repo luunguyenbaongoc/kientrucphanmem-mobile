@@ -28,7 +28,7 @@ export class Http {
 
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error.response?.data)
     );
 
     let isRefreshToken = false;
@@ -96,7 +96,7 @@ export class Http {
         }
 
         // notificationError("", error.response?.data);
-        return Promise.reject(error);
+        return Promise.reject(error.response?.data);
       }
     );
   }
