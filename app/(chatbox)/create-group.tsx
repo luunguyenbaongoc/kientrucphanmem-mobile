@@ -8,15 +8,17 @@ import {
     Button, 
     StyleSheet 
 } from 'react-native';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 const CreateGroupScreen = () => {
   const [name, setName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
+  const queryClient = useQueryClient();
 
   const createGroup = useMutation(groupAPI.createGroup, {
     onSuccess: (response) => {
       const { name } = response.data;
+      queryClient.invalidateQueries(["getGroupsByUser", ""]);
       router.push({
         pathname: "/(chatbox)/group-chatbox",
         params: { groupName: name },
