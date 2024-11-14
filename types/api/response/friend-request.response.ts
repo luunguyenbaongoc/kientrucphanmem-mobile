@@ -5,4 +5,5 @@ export type FriendRequestResponse = {
   created_date: Date;
   friend_request_status_id: string;
   to_user_profile: any;
+  from_user_profile: any;
 }

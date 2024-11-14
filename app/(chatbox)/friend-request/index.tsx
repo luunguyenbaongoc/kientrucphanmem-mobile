@@ -79,7 +79,7 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
       >
         <Image
           source={{
-            uri: `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
+            uri: `data:image/png;base64, ${item?.from_user_profile?.profile[0]?.avatar}`,
           }}
           style={styles.avatar}
         />
@@ -132,11 +132,11 @@ const FriendRequestReceived = () => {
             <View>
               <RenderItem
                 item={item}
-                name={item?.to_user_profile?.profile[0]?.fullname}
+                name={item?.from_user_profile?.profile[0]?.fullname}
                 userId={item.id}
                 onCallPress={handleCallPress}
               />
-              <Button>Đồng ý</Button>
+              {/* <Button>Đồng ý</Button> */}
             </View>
           )}
         />
