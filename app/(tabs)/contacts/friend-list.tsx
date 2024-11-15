@@ -62,7 +62,7 @@ const FriendListScreen = () => {
     console.log(`Making ${type} call`);
   };
 
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ["findFriendsByText", searchQuery],
     queryFn: () => friendAPI.findByText({ text: searchQuery }),
     enabled: true,
@@ -73,6 +73,7 @@ const FriendListScreen = () => {
 
   const handleSearchFriend = (text: string) => {
     setSearchQuery(text);
+    refetch();
   };
 
   return (
