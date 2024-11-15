@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
 import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
 import { Link, router } from "expo-router";
 import { useQuery } from "react-query";
-import { FriendResponse } from "@/types/api/response";
 import { friendAPI } from "@/api/friend.api";
 
 const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
@@ -27,7 +26,9 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
       >
         <Image
           source={{
-            uri: `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
+            uri: item?.to_user_profile?.profile[0]?.avatar?.startsWith("http") ? 
+              item?.to_user_profile?.profile[0]?.avatar : 
+              `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
           }}
           style={styles.avatar}
         />
@@ -61,7 +62,7 @@ const FriendListScreen = () => {
     console.log(`Making ${type} call`);
   };
 
-  const { isLoading, data, refetch } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["findFriendsByText", searchQuery],
     queryFn: () => friendAPI.findByText({ text: searchQuery }),
     enabled: true,
@@ -69,10 +70,6 @@ const FriendListScreen = () => {
       return rs.data;
     },
   });
-
-  // if (isLoading) {
-  //   return <ActivityIndicator />;
-  // }
 
   const handleSearchFriend = (text: string) => {
     setSearchQuery(text);

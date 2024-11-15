@@ -10,7 +10,7 @@ export default function FriendRequestLayout() {
         options={{
           title: 'Đã nhận',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'body' : 'body-outline'} color={color} />
+            <TabBarIcon name={focused ? 'mail' : 'mail-outline'} color={color} />
           ),
         }}
       />
@@ -19,7 +19,7 @@ export default function FriendRequestLayout() {
         options={{
           title: 'Đã gửi',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'body' : 'body-outline'} color={color} />
+            <TabBarIcon name={focused ? 'send' : 'send-outline'} color={color} />
           ),
         }}
       />

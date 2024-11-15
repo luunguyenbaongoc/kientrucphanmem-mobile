@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -11,10 +11,6 @@ import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
 import { router } from "expo-router";
 import { useQuery } from "react-query";
 import { groupAPI } from "@/api/group.api";
-import {
-  GroupMemberInfoResponse,
-  GroupMemberResponse,
-} from "@/types/api/response/group.member.response";
 
 const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => (
   <View style={styles.itemContainer}>
@@ -29,7 +25,7 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => (
     >
       <Image
         source={{
-          uri: `data:image/png;base64, ${item?.group.avatar}`,
+          uri: item?.group.avatar?.startsWith("http") ? item?.group.avatar : `data:image/png;base64, ${item?.group.avatar}`,
         }}
         style={styles.avatar}
       />

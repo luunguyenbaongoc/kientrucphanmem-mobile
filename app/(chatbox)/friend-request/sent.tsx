@@ -8,14 +8,13 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { Button, IconButton } from "react-native-paper";
-import { router } from "expo-router";
+import { IconButton } from "react-native-paper";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { friendAPI } from "@/api/friend.api";
-import { FriendRequestResponse } from "@/types/api/response/friend-request.response";
 import { useToast } from "react-native-paper-toast";
 
-const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
+const RenderItem = ({ name, item }: ItemInfo) => {
+  const avatar: string = item?.to_user_profile?.profile[0]?.avatar;
   const toaster = useToast();
   const declineRequest = useMutation(friendAPI.declineRequest, {
     onSuccess: (response) => {
@@ -45,17 +44,10 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity
-        style={styles.iconContainer}
-        // onPress={() => {
-        //   router.push({
-        //     pathname: "/(chatbox)",
-        //     params: { userId, name },
-        //   });
-        // }}
-      >
+        style={styles.iconContainer}>
         <Image
           source={{
-            uri: `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
+            uri: avatar?.startsWith("http") ? avatar : `data:image/png;base64, ${avatar}`,
           }}
           style={styles.avatar}
         />
@@ -70,24 +62,12 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
             onPress={handleDeclineRequest}
           />
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => onCallPress("video")}>
-        <IconButton
-          icon="video"
-          size={20}
-          iconColor="blue"
-          onPress={() => {}}
-        />
-      </TouchableOpacity> */}
       </View>
     </View>
   );
 };
 
 const FriendRequestSent = () => {
-  const handleCallPress = (type: string) => {
-    console.log(`Making ${type} call`);
-  };
-
   const { data, isLoading } = useQuery({
     queryKey: ["getFriendRequestsSent"],
     queryFn: () => friendAPI.getFriendRequestsSent(),
@@ -109,10 +89,7 @@ const FriendRequestSent = () => {
               <RenderItem
                 item={item}
                 name={item?.to_user_profile?.profile[0]?.fullname}
-                userId={item.id}
-                onCallPress={handleCallPress}
               />
-              {/* <Button>Đồng ý</Button> */}
             </View>
           )}
         />
@@ -122,10 +99,8 @@ const FriendRequestSent = () => {
 };
 
 interface ItemInfo {
-  userId: string;
   name: string;
   item?: any;
-  onCallPress: (name: string) => void;
 }
 
 const styles = StyleSheet.create({
