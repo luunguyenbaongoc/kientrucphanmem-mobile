@@ -63,6 +63,7 @@ const GroupListScreen = () => {
     queryKey: ["getGroupsByUser", searchQuery],
     queryFn: () => groupAPI.getGroups({ searchText: searchQuery }),
     select: (rs) => {
+      console.log(rs.data);
       return rs.data;
     },
   });

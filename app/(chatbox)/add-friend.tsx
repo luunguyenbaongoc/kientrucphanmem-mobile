@@ -1,11 +1,8 @@
-import { authAPI } from "@/api";
 import { friendAPI } from "@/api/friend.api";
-import { ThemedText } from "@/components/ThemedText";
-import { router } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { useToast } from "react-native-paper-toast";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 
 const AddFriendScreen = () => {
   const toaster = useToast();
@@ -29,28 +26,6 @@ const AddFriendScreen = () => {
     },
   });
 
-  // useQuery(["checkUserExist", phone], () => authAPI.checkUserExist(phone), {
-  //   enabled: phone.length > 0,
-  //   onSuccess: async (response) => {
-  //     const exist: boolean = response.data;
-  //     if (!exist) {
-  //       // setMessage("Số điện thoại không tồn tại!");
-  //       toaster.show({
-  //         message: "Số điện thoại không tồn tại!",
-  //         duration: 2000,
-  //         type: "error",
-  //       });
-  //     }
-  //   },
-  //   onError: (error: any) => {
-  //     toaster.show({
-  //       message: error.message,
-  //       duration: 2000,
-  //       type: "error",
-  //     });
-  //   },
-  // });
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Thêm bạn</Text>
@@ -67,7 +42,6 @@ const AddFriendScreen = () => {
           sendFriendRequest.mutate({ to_user_phone: phone });
         }}
       />
-      {/* <ThemedText type='default' style={{ color: "black" }}>{message}</ThemedText> */}
     </View>
   );
 };
