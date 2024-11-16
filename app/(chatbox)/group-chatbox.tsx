@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { Chatbox } from '@/components/ChatBox';
 
 const GroupChatBoxScreen = () => {
-  const { groupName } = useLocalSearchParams();
+  const { groupName, groupId } = useLocalSearchParams();
 
   return (
     <View style={styles.detailContainer}>
@@ -22,6 +22,17 @@ const GroupChatBoxScreen = () => {
           size={30}
           iconColor="blue"
           onPress={() => {}}
+        />
+        <IconButton
+          icon="cog"
+          size={30}
+          iconColor="blue"
+          onPress={() => {
+            router.push({
+              pathname: '/group-setting',
+              params: { groupName, groupId }
+            })
+          }}
         />
       </View>
       <SafeAreaView style={styles.detailContainer}>

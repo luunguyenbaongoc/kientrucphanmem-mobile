@@ -12,14 +12,14 @@ import { router } from "expo-router";
 import { useQuery } from "react-query";
 import { groupAPI } from "@/api/group.api";
 
-const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => (
+const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => (
   <View style={styles.itemContainer}>
     <TouchableOpacity
       style={styles.iconContainer}
       onPress={() => {
         router.push({
-          pathname: "/(chatbox)",
-          params: { userId, name },
+          pathname: "/(chatbox)/group-chatbox",
+          params: { groupName: name, groupId },
         });
       }}
     >
@@ -63,7 +63,6 @@ const GroupListScreen = () => {
     queryKey: ["getGroupsByUser", searchQuery],
     queryFn: () => groupAPI.getGroups({ searchText: searchQuery }),
     select: (rs) => {
-      console.log(rs.data);
       return rs.data;
     },
   });
@@ -92,8 +91,10 @@ const GroupListScreen = () => {
             <RenderItem
               item={item}
               name={item.group.name}
-              userId={item.user_id}
-              onCallPress={handleCallPress}
+              groupId={item.group_id}
+              onCallPress={() => {
+                handleCallPress(item.group_id);
+              }}
             />
           )}
         />
@@ -103,10 +104,10 @@ const GroupListScreen = () => {
 };
 
 interface ItemInfo {
-  userId: string;
+  groupId: string;
   name: string;
   item?: any;
-  onCallPress: (name: string) => void;
+  onCallPress: (groupId: string) => void;
 }
 
 const styles = StyleSheet.create({

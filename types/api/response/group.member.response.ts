@@ -12,3 +12,16 @@ export type GroupMemberResponse = {
   groups: GroupMemberInfoResponse[];
   count: number;
 };
+
+export type GroupUserResponse = {
+  users: (GroupMemberInfoResponse & { 
+    user: { 
+      profile: { 
+        fullname: string,
+        avatar?: string,
+        user_id: string
+      }[]
+    }
+  })[];
+  count: number;
+}
