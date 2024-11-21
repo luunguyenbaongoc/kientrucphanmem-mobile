@@ -4,15 +4,15 @@
 //   ThemeProvider,
 // } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, SplashScreen, router, Redirect } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 // import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ToastProvider } from "react-native-paper-toast";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { ToastProvider } from "react-native-paper-toast";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

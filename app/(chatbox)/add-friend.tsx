@@ -1,6 +1,6 @@
 import { friendAPI } from "@/api/friend.api";
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { useToast } from "react-native-paper-toast";
 import { useMutation } from "react-query";
 

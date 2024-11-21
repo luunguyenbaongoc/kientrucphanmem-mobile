@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { IconButton, MD3Colors } from 'react-native-paper';
 import { Chatbox } from '@/components/ChatBox';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 const UserChatBoxScreen = () => {
   const { userId, name } = useLocalSearchParams();

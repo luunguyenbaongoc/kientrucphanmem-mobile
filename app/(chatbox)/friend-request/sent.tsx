@@ -1,17 +1,17 @@
+import { friendAPI } from "@/api/friend.api";
 import React from "react";
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
   ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { IconButton } from "react-native-paper";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { friendAPI } from "@/api/friend.api";
 import { useToast } from "react-native-paper-toast";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const RenderItem = ({ name, item }: ItemInfo) => {
   const avatar: string = item?.to_user_profile?.profile[0]?.avatar;
@@ -47,7 +47,7 @@ const RenderItem = ({ name, item }: ItemInfo) => {
         style={styles.iconContainer}>
         <Image
           source={{
-            uri: avatar?.startsWith("http") ? avatar : `data:image/png;base64, ${avatar}`,
+            uri: `data:image/png;base64, ${avatar}`,
           }}
           style={styles.avatar}
         />

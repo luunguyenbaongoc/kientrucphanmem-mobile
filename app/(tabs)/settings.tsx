@@ -1,29 +1,31 @@
+import { authAPI } from "@/api";
+import { userAPI } from "@/api/user.api";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogOutDto } from "@/types/api/dto";
+import { ProfileResponse } from "@/types/api/response/profile.response";
+import { STORAGE_KEY } from "@/utils/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import * as React from "react";
 import {
-  View,
+  Image,
+  StyleSheet,
   Text,
   TextInput,
-  Image,
   TouchableOpacity,
-  StyleSheet,
+  View,
 } from "react-native";
 import { Button } from "react-native-paper";
-import * as ImagePicker from "expo-image-picker";
+import { useToast } from "react-native-paper-toast";
 import { useMutation, useQuery } from "react-query";
-import { authAPI } from "@/api";
-import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { STORAGE_KEY } from "@/utils/constants";
-import { LogOutDto } from "@/types/api/dto";
-import { userAPI } from "@/api/user.api";
-import { ProfileResponse } from "@/types/api/response/profile.response";
-import { useAuth } from "@/contexts/AuthContext";
 
 const SettingsScreen = () => {
+  const toaster = useToast();
   const { setAccessToken, setUserId } = useAuth();
   const [profileInfo, setProfileInfo] = React.useState<ProfileResponse>({
     fullname: "",
-    avatar: undefined,
+    avatar: "",
     id: "",
   });
 
@@ -36,15 +38,15 @@ const SettingsScreen = () => {
     });
 
     if (!result.canceled) {
-      const formData = new FormData();
-      const { fileName, uri } = result.assets[0] as {
+      const { uri } = result.assets[0] as {
         fileName: string;
         uri: string;
       };
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      formData.append("file", blob, fileName);
-      uploadAvatar.mutate({ profileId: profileInfo.id, formData: formData });
+      updateProfile.mutate({
+        profileId: profileInfo.id,
+        fullname: profileInfo.fullname,
+        avatar: uri.replace('data:image/png;base64,', '')
+      });
     }
   };
 
@@ -52,6 +54,7 @@ const SettingsScreen = () => {
     updateProfile.mutate({
       profileId: profileInfo.id,
       fullname: profileInfo.fullname,
+      avatar: profileInfo.avatar
     });
   };
 
@@ -65,22 +68,22 @@ const SettingsScreen = () => {
     },
   });
 
-  const uploadAvatar = useMutation(userAPI.uploadAvatar, {
-    onSuccess: async (response) => {
-      const profile: ProfileResponse = response.data;
-      setProfileInfo({ ...profileInfo, ...profile });
-    },
-    onError: (error: any) => {
-      console.log(error);
-    },
-  });
-
   const updateProfile = useMutation(userAPI.updateProfile, {
     onSuccess: async (response) => {
       const profile: ProfileResponse = response.data;
       setProfileInfo({ ...profileInfo, ...profile });
+      toaster.show({
+        message: 'Lưu hồ sơ thành công',
+        duration: 2000,
+        type: "success",
+      });
     },
     onError: (error: any) => {
+      toaster.show({
+        message: 'Lưu hồ sơ không thành công thành công',
+        duration: 2000,
+        type: "error",
+      });
       console.log(error);
     },
   });

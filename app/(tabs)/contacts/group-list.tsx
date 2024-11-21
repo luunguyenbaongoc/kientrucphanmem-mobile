@@ -1,16 +1,16 @@
+import { groupAPI } from "@/api/group.api";
+import { router } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
-  StyleSheet,
   Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
-import { router } from "expo-router";
 import { useQuery } from "react-query";
-import { groupAPI } from "@/api/group.api";
 
 const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => (
   <View style={styles.itemContainer}>
@@ -25,7 +25,7 @@ const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => (
     >
       <Image
         source={{
-          uri: item?.group.avatar?.startsWith("http") ? item?.group.avatar : `data:image/png;base64, ${item?.group.avatar}`,
+          uri: item?.group.avatar ? `data:image/png;base64, ${item?.group.avatar}`: undefined
         }}
         style={styles.avatar}
       />

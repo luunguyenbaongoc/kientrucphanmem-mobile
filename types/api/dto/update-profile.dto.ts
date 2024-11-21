@@ -1,4 +1,5 @@
 export class UpdateProfileDto {
   profileId!: string;
-  fullname!: string;
+  fullname?: string;
+  avatar?: string
 }

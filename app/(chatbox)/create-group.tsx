@@ -1,19 +1,19 @@
 import { groupAPI } from '@/api/group.api';
+import { GroupResponse } from '@/types/api/response';
+import * as ImagePicker from "expo-image-picker";
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import * as ImagePicker from "expo-image-picker";
-import { 
-    View, 
-    Text, 
-    TextInput, 
-    Button, 
-    StyleSheet, 
-    TouchableOpacity,
-    Image
+import {
+  Button,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { useMutation, useQueryClient } from 'react-query';
-import { GroupResponse } from '@/types/api/response';
 import { useToast } from 'react-native-paper-toast';
+import { useMutation, useQueryClient } from 'react-query';
 
 interface GroupAvatarInfo {
   uri: string;

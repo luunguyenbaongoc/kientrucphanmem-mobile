@@ -1,16 +1,16 @@
+import { friendAPI } from "@/api/friend.api";
+import { Link, router } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
-  StyleSheet,
   Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
-import { Link, router } from "expo-router";
 import { useQuery } from "react-query";
-import { friendAPI } from "@/api/friend.api";
 
 const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
   return (
@@ -26,9 +26,8 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
       >
         <Image
           source={{
-            uri: item?.to_user_profile?.profile[0]?.avatar?.startsWith("http") ? 
-              item?.to_user_profile?.profile[0]?.avatar : 
-              `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`,
+            uri: item?.to_user_profile?.profile[0]?.avatar 
+              ? `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`: undefined
           }}
           style={styles.avatar}
         />

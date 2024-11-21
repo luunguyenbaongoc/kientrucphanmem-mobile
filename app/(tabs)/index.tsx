@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { router, useRouter } from 'expo-router';
-import { Searchbar } from 'react-native-paper';
 import { DropDownMenu } from '@/components/Menu';
+import { router, useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Searchbar } from 'react-native-paper';
 
 const data = [
   { id: '1', name: 'John Doe', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },

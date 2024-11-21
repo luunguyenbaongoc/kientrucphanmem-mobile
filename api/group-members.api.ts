@@ -1,6 +1,6 @@
 import { RemoveGroupMemberDto } from "@/types/api/dto/group-members";
-import http from "../utils/http";
 import { GroupUserResponse } from "@/types/api/response/group.member.response";
+import http from "../utils/http";
 
 export const GROUP_MEMBERS_URL = {
   GROUP_MEMBERS: "/group-members/list-by-group/%",

@@ -1,17 +1,17 @@
+import { groupMemberAPI } from "@/api";
+import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
-  StyleSheet,
   Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { ActivityIndicator, IconButton } from "react-native-paper";
-import { router, useLocalSearchParams } from "expo-router";
-import { useMutation, useQuery } from "react-query";
-import { groupMemberAPI } from "@/api";
 import { useToast } from "react-native-paper-toast";
+import { useMutation, useQuery } from "react-query";
 
 const RenderItem = ({ item, onRemoveUser }: any) => {
   return (
@@ -27,8 +27,8 @@ const RenderItem = ({ item, onRemoveUser }: any) => {
       >
         <Image
           source={
-            item.user.profile[0].avatar.startsWith("http") 
-              ? item.user.profile[0].avatar : `data:image/png;base64, ${item.user.profile[0].avatar}`
+            item.user.profile[0].avatar
+              ? `data:image/png;base64, ${item.user.profile[0].avatar}`: item.user.profile[0].avatar
             }
           style={styles.avatar}
         />

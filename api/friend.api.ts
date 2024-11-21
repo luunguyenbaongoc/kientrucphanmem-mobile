@@ -1,8 +1,8 @@
-import http from "../utils/http";
-import { FriendResponse } from "@/types/api/response";
 import { MakeRequestDto } from "@/types/api/dto";
-import { FriendRequestResponse } from "@/types/api/response/friend-request.response";
 import { FindByTextDto } from "@/types/api/dto/friend";
+import { FriendResponse } from "@/types/api/response";
+import { FriendRequestResponse } from "@/types/api/response/friend-request.response";
+import http from "../utils/http";
 
 export const FRIEND_URL = {
   FRIEND: "/friend",

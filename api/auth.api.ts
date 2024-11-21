@@ -1,5 +1,5 @@
 import { Token } from "@/types/api/response/token.response";
-import { LogInDto, RefreshDto, RegisterDto, LogOutDto } from "../types/api/dto";
+import { LogInDto, LogOutDto, RefreshDto, RegisterDto } from "../types/api/dto";
 import { LoginResponse, RegisterResponse } from "../types/api/response";
 import http from "../utils/http";
 
