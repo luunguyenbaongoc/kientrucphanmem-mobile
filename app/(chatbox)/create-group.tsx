@@ -1,5 +1,4 @@
 import { groupAPI } from '@/api/group.api';
-import { GroupResponse } from '@/types/api/response';
 import * as ImagePicker from "expo-image-picker";
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -55,20 +54,6 @@ const CreateGroupScreen = () => {
         duration: 2000,
         type: "success",
       });
-    },
-    onError: (error: any) => {
-      toaster.show({
-        message: error.message,
-        duration: 2000,
-        type: "error",
-      });
-    },
-  });
-
-  const uploadAvatar = useMutation(groupAPI.uploadAvatar, {
-    onSuccess: async (response) => {
-      const { avatar } : GroupResponse = response.data;
-      setGroupImageInfo({ uri: avatar || '', fileName: avatar || '' });
       router.push({
         pathname: "/(chatbox)/group-chatbox",
         params: { groupName: name },
@@ -82,16 +67,6 @@ const CreateGroupScreen = () => {
       });
     },
   });
-
-  const handleAddGroup = async () => {
-    createGroup.mutate({ name, description });
-    const formData = new FormData();
-    const { fileName, uri } = groupImageInfo;
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    formData.append("file", blob, fileName);
-    uploadAvatar.mutate({ id: groupId, formData: formData });
-  }
 
   return (
     <View style={styles.container}>
@@ -122,7 +97,9 @@ const CreateGroupScreen = () => {
         onChangeText={setDescription}
         multiline
       />
-      <Button title="Tạo nhóm" onPress={handleAddGroup} />
+      <Button title="Tạo nhóm" onPress={() => {
+        createGroup.mutate({ name, description });
+      }} />
     </View>
   );
 };
