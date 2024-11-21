@@ -1,15 +1,19 @@
+import { groupMemberAPI } from "@/api";
+import { GROUP_SETTING_ITEMS } from "@/utils/constants/GroupSettingRoutes";
+import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { GROUP_SETTING_ITEMS } from "@/utils/constants/GroupSettingRoutes";
 import { IconButton } from "react-native-paper";
-import { router, useLocalSearchParams } from "expo-router";
 
+const MAP_MENU_ITEM_API = {
+  "leave-group": groupMemberAPI.leaveGroup
+};
 
 const RenderItem = ({ groupId, groupName, item }: ItemInfo) => (
   <View style={styles.itemContainer}>
@@ -33,7 +37,6 @@ const RenderItem = ({ groupId, groupName, item }: ItemInfo) => (
 
 const GroupSettingScreen = () => {
   const { groupName, groupId } = useLocalSearchParams() as { groupName: string, groupId: string };
-
   return (
     <View 
       style={styles.container}>
@@ -54,6 +57,7 @@ interface ItemInfo {
   groupId: string;
   groupName: string;
   item: {
+    id: any,
     icon?: any;
     action: string;
     route: any;
