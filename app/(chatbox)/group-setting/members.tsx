@@ -106,6 +106,7 @@ const MembersScreen = () => {
         <ActivityIndicator />
       ) : (
         <FlatList
+          scrollEnabled={true}
           data={data}
           keyExtractor={(item) => item.user_id}
           renderItem={({ item }) => (

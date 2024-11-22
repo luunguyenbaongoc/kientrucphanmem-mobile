@@ -1,5 +1,5 @@
 import { groupMemberAPI } from "@/api";
-import { GROUP_SETTING_ITEMS } from "@/utils/constants/GroupSettingRoutes";
+import { GROUP_SETTING_ITEMS } from "@/utils/constants/group-setting-routes";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
@@ -10,30 +10,59 @@ import {
   View,
 } from "react-native";
 import { IconButton } from "react-native-paper";
+import { useToast } from "react-native-paper-toast";
+import { UseMutateFunction, useMutation, useQueryClient } from "react-query";
 
-const MAP_MENU_ITEM_API = {
-  "leave-group": groupMemberAPI.leaveGroup
-};
-
-const RenderItem = ({ groupId, groupName, item }: ItemInfo) => (
-  <View style={styles.itemContainer}>
-    <TouchableOpacity
-      style={styles.iconContainer}
-      onPress={() => {
-        router.push({
-          pathname: item.route,
-          params: { groupName, groupId },
+const RenderItem = ({ groupId, groupName, item }: ItemInfo) => {
+  const toaster = useToast();
+  const queryClient = useQueryClient();
+  const leaveGroup = useMutation(groupMemberAPI.leaveGroup, {
+    onSuccess: (response) => {
+      if (response.data) {
+        toaster.show({
+          message: "Thao tác thành công",
+          duration: 1000,
+          type: "success",
         });
-      }}>
-      <IconButton
-        icon={item.icon}
-        size={30}
-        iconColor="gray"
-      />
-      <Text style={{ ...styles.itemText, color: item.textColor}}>{item.action}</Text>
-    </TouchableOpacity>
-  </View>
-);
+        queryClient.invalidateQueries(['getGroupsByUser']);
+      }
+    },
+    onError: (error: any) => {
+      toaster.show({
+        message: error.response.data.message,
+        duration: 2000,
+        type: "error",
+      });
+    },
+  });
+  const GROUP_SETTING_ITEM_API_MAP = new Map<string, any> ([
+    ['leave-group', leaveGroup]
+  ]);
+
+  return (
+    <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => {
+          const action = GROUP_SETTING_ITEM_API_MAP.get(item.id);
+          if (action) {
+            action.mutate(groupId);
+          }
+          router.push({
+            pathname: item.route,
+            params: { groupName, groupId },
+          });
+        }}>
+        <IconButton
+          icon={item.icon}
+          size={30}
+          iconColor="gray"
+        />
+        <Text style={{ ...styles.itemText, color: item.textColor}}>{item.text}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const GroupSettingScreen = () => {
   const { groupName, groupId } = useLocalSearchParams() as { groupName: string, groupId: string };
@@ -59,7 +88,7 @@ interface ItemInfo {
   item: {
     id: any,
     icon?: any;
-    action: string;
+    text: string;
     route: any;
     textColor?: string;
   }

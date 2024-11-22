@@ -78,7 +78,7 @@ const GroupListScreen = () => {
           placeholder="Tìm kiếm"
           onChangeText={handleSearchFriend}
           value={searchQuery}
-          // style={styles.searchBar}
+          style={styles.searchBar}
         />
       </View>
       {isLoading ? (
@@ -112,6 +112,10 @@ interface ItemInfo {
 }
 
 const styles = StyleSheet.create({
+  searchBar: {
+    flex: 1,
+    marginRight: 10,
+  },
   itemContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
