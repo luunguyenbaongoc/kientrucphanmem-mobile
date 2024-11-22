@@ -99,7 +99,7 @@ const FriendListScreen = () => {
             <RenderItem
               item={item}
               name={item.to_user_profile.profile[0].fullname}
-              userId={item.id}
+              userId={item.from_user}
               onCallPress={handleCallPress}
             />
           )}

@@ -12,7 +12,13 @@ import {
   View
 } from 'react-native';
 import { useToast } from 'react-native-paper-toast';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { 
+  EditableComboBox, 
+  EditableComboBoxModelItem 
+} from '@/components/ComboBox';
+import { friendAPI } from '@/api/friend.api';
+import { ActivityIndicator } from 'react-native-paper';
 
 interface GroupAvatarInfo {
   uri: string;
@@ -24,6 +30,7 @@ const CreateGroupScreen = () => {
   const [description, setDescription] = useState('');
   const [groupId, setGroupId] = useState('');
   const [groupImageInfo, setGroupImageInfo] = useState<GroupAvatarInfo>({uri: '', fileName: ''});
+  const [queryEnabled, setQueryEnabled] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const toaster = useToast();
 
@@ -43,6 +50,23 @@ const CreateGroupScreen = () => {
       setGroupImageInfo({ uri, fileName });
     }
   };
+
+  const { isLoading, data: friendList } = useQuery({
+    queryKey: ["findFriendsByText", ""],
+    queryFn: () => friendAPI.findByText({ text: "" }),
+    enabled: queryEnabled,
+    select: (rs) => {
+      let data: EditableComboBoxModelItem[] = [];
+      rs.data.forEach((item, index) => {
+        data.push({
+          id: index,
+          text: item.to_user_profile.profile[0].fullname,
+          avatar: `data:image/png;base64, ${item.to_user_profile.profile[0]?.avatar}`,
+        });
+      });
+      return data;
+    },
+  });
 
   const createGroup = useMutation(groupAPI.createGroup, {
     onSuccess: (response) => {
@@ -68,7 +92,9 @@ const CreateGroupScreen = () => {
     },
   });
 
-  return (
+  return isLoading ? 
+    <ActivityIndicator /> 
+    : (
     <View style={styles.container}>
       <Text style={styles.title}>Tạo nhóm</Text>
       <TouchableOpacity onPress={pickImage}>
@@ -96,6 +122,13 @@ const CreateGroupScreen = () => {
         value={description}
         onChangeText={setDescription}
         multiline
+      />
+      <EditableComboBox 
+        items={friendList as EditableComboBoxModelItem[]}
+        placeHolderText="Tìm bạn"
+        onFocus={() => {
+          setQueryEnabled(true);
+        }}
       />
       <Button title="Tạo nhóm" onPress={() => {
         createGroup.mutate({ name, description });
