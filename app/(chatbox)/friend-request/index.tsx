@@ -114,6 +114,7 @@ const FriendRequestReceived = () => {
         <ActivityIndicator />
       ) : (
         <FlatList
+          scrollEnabled={true}
           data={data}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (

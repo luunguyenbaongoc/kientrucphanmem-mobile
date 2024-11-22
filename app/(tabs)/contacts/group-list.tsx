@@ -85,6 +85,7 @@ const GroupListScreen = () => {
         <ActivityIndicator />
       ) : (
         <FlatList
+          scrollEnabled={true}
           data={data?.groups}
           keyExtractor={(item) => item.group_id}
           renderItem={({ item }) => (

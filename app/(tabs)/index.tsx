@@ -44,30 +44,23 @@ const FriendListSreen = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  const handleSearchFriend = (text: string) => {
-    // TODO: Implement search logic
-    console.log('Search:', text);
-    // Replace with actual search logic when ready
+  const handleSearchMessage = (text: string) => {
     setSearchQuery(text);
   };
-
-  useEffect(() => {
-    // Add any cleanup logic here, such as subscriptions or timers
-    // Request getting friend list -> data.
-  })
 
   return (
     <View>
       <View style={styles.toolContainer}>
         <Searchbar
           placeholder="Search"
-          onChangeText={handleSearchFriend}
+          onChangeText={handleSearchMessage}
           value={searchQuery}
           style={styles.searchBar}
         />
         <DropDownMenu items={TOOL_MENU_ITEMS}/>
       </View>
       <FlatList
+        scrollEnabled={true}
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
