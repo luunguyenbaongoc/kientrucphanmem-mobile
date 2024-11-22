@@ -1,64 +1,60 @@
-import * as React from "react";
-import { View } from "react-native";
-import {
-  Menu,
-  IconButton,
-  Provider,
-} from "react-native-paper";
+import { Href, router } from 'expo-router';
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Menu, IconButton } from 'react-native-paper';
 
-export interface MenuItemProps {
-  title?: string;
-  onPress?: () => void;
+
+interface SimpleMenuItem {
+  title: string;
+  route: Href<string | object>;
+};
+
+interface SimpleMenuProps {
+  items: SimpleMenuItem[];
 }
 
-export interface MenuProps {
-  items?: MenuItemProps[];
-  [key: string]: any;
-}
-
-export const DropDownMenu = ({ items, ...rests }: MenuProps) => {
-  const [visible, setVisible] = React.useState(false);
+export const SimpleMenu = ({ items }: SimpleMenuProps) => {
+  const [visible, setVisible] = useState(false);
 
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
   return (
-    <View style={{ zIndex: 100 }}>
-      <Provider>
-        <View>
-          <Menu
-            style={{
-              top: 0,
-              left: -130,
-              position: "absolute",
-              zIndex: 100,
-              width: 150,
-              justifyContent: "flex-end",
-            }}
-            visible={visible}
-            onDismiss={closeMenu}
-            anchor={
-              <IconButton
-                icon="dots-vertical"
-                size={30}
-                iconColor="blue"
-                onPress={openMenu}
-              />
-            }
-          >
-            {items?.map((item, index) => (
-              <Menu.Item
-                key={index}
-                onPress={() => {
-                  closeMenu();
-                  item.onPress && item.onPress();
-                }}
-                title={item.title}
-              />
-            ))}
-          </Menu>
-        </View>
-      </Provider>
+    <View style={styles.container}>
+      <Menu
+        visible={visible}
+        onDismiss={closeMenu}
+        anchor={
+          <IconButton
+            icon="dots-vertical"
+            size={24}
+            onPress={openMenu}
+          />
+        }
+        contentStyle={styles.menuContent}
+      >
+        {items.map(
+          item => <Menu.Item 
+            title={item.title} 
+            onPress={() => {
+                router.navigate(item.route)
+                closeMenu();
+              }
+          }/>)
+        }
+      </Menu>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  menuContent: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+  },
+});

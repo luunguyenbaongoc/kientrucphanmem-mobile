@@ -9,7 +9,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
+import { 
+  ActivityIndicator, 
+  IconButton, 
+  Searchbar 
+} from "react-native-paper";
 import { useQuery } from "react-query";
 
 const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => (
@@ -115,6 +119,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     marginRight: 10,
+    backgroundColor: '#fff',
   },
   itemContainer: {
     flexDirection: "row",

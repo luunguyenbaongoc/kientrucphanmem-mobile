@@ -76,7 +76,7 @@ const FriendListScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <View style={styles.toolContainer}>
         <Searchbar
           placeholder="Tìm kiếm"
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     marginRight: 10,
+    backgroundColor: '#fff',
   },
   itemContainer: {
     flexDirection: "row",
@@ -154,10 +155,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
-  },
-  container: {
-    // paddingTop: 20
-  },
+  }
 });
 
 export default FriendListScreen;

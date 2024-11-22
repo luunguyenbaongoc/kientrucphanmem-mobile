@@ -1,28 +1,21 @@
-import { DropDownMenu } from '@/components/Menu';
-import { router, useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SimpleMenu } from '@/components/Menu';
+import React from 'react';
+import { 
+  FlatList, 
+  Image, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity, 
+  View 
+} from 'react-native';
 import { Searchbar } from 'react-native-paper';
+import { router } from 'expo-router';
+import { MESSAGE_MENU_ITEMS } from '@/utils/constants/message-menu-items';
 
 const data = [
   { id: '1', name: 'John Doe', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
   { id: '2', name: 'Jane Smith', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
   { id: '3', name: 'Alice Johnson', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
-];
-
-const TOOL_MENU_ITEMS = [
-  { 
-    title: 'Tạo nhóm', 
-    onPress: () => {
-      router.navigate('/(chatbox)/create-group');
-    }
-  },
-  { 
-    title: 'Thêm bạn', 
-    onPress: () => {
-      router.navigate('/(chatbox)/add-friend');
-    }
-  },
 ];
 
 interface ListItemProps {
@@ -41,7 +34,6 @@ const ListItem = ({ name, avatar, onPress }: ListItemProps) => (
 );
 
 const FriendListSreen = () => {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const handleSearchMessage = (text: string) => {
@@ -50,14 +42,14 @@ const FriendListSreen = () => {
 
   return (
     <View>
-      <View style={styles.toolContainer}>
+      <View style={styles.barContainer}>
         <Searchbar
           placeholder="Search"
           onChangeText={handleSearchMessage}
           value={searchQuery}
           style={styles.searchBar}
         />
-        <DropDownMenu items={TOOL_MENU_ITEMS}/>
+        <SimpleMenu items={MESSAGE_MENU_ITEMS}/>
       </View>
       <FlatList
         scrollEnabled={true}
@@ -81,15 +73,19 @@ const FriendListSreen = () => {
 };
 
 const styles = StyleSheet.create({
-  searchBar: {
-    flex: 1,
-    marginRight: 10,
-  },
-  toolContainer: {
+  barContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchBar: {
+    flex: 12,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemContainer: {
     flexDirection: 'row',
