@@ -1,4 +1,5 @@
 import { friendAPI } from "@/api/friend.api";
+import { useCheckUserExist } from "@/hooks/useCheckUserExist";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { useToast } from "react-native-paper-toast";
@@ -7,6 +8,7 @@ import { useMutation } from "react-query";
 const AddFriendScreen = () => {
   const toaster = useToast();
   const [phone, setPhone] = useState("");
+  const [found, setFound] = useState<boolean>(false);
 
   const sendFriendRequest = useMutation(friendAPI.sendFriendRequest, {
     onSuccess: (response) => {
@@ -26,15 +28,21 @@ const AddFriendScreen = () => {
     },
   });
 
+  const handleChangePhone = (phone: string) => {
+    const { data } = useCheckUserExist(phone);
+    if (data?.data) {
+      setFound(true);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Thêm bạn</Text>
-
       <TextInput
         style={styles.input}
         placeholder="Nhập số điện thoại"
         value={phone}
-        onChangeText={setPhone}
+        onChangeText={handleChangePhone}
       />
       <Button
         title="Thêm bạn"

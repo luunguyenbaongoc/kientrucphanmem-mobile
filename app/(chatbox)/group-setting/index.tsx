@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { IconButton } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
-import { UseMutateFunction, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
 const RenderItem = ({ groupId, groupName, item }: ItemInfo) => {
   const toaster = useToast();
