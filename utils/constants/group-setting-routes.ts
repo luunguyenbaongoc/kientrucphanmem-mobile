@@ -1,5 +1,3 @@
-import { groupMemberAPI } from "@/api";
-
 export const GROUP_SETTING_ITEMS = [
     {
         id: 'view-members',

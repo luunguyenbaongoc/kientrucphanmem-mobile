@@ -1,14 +1,20 @@
 import { friendAPI } from "@/api/friend.api";
 import { useCheckUserExist } from "@/hooks/useCheckUserExist";
 import React, { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from "react-native";
+import { IconButton } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
 import { useMutation } from "react-query";
 
 const AddFriendScreen = () => {
   const toaster = useToast();
   const [phone, setPhone] = useState("");
-  const [found, setFound] = useState<boolean>(false);
+  const { data, refetch } = useCheckUserExist(phone);
 
   const sendFriendRequest = useMutation(friendAPI.sendFriendRequest, {
     onSuccess: (response) => {
@@ -28,28 +34,38 @@ const AddFriendScreen = () => {
     },
   });
 
-  const handleChangePhone = (phone: string) => {
-    const { data } = useCheckUserExist(phone);
-    if (data?.data) {
-      setFound(true);
-    }
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Thêm bạn</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập số điện thoại"
-        value={phone}
-        onChangeText={handleChangePhone}
-      />
-      <Button
-        title="Thêm bạn"
-        onPress={() => {
-          sendFriendRequest.mutate({ to_user_phone: phone });
-        }}
-      />
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập số điện thoại"
+          placeholderTextColor="#aaa"
+          value={phone}
+          onChangeText={(phone: string) => {
+            setPhone(phone);
+          }}
+        />
+        <IconButton
+          icon="account-plus"
+          size={24}
+          onPress={() => sendFriendRequest.mutate({ to_user_phone: phone })}
+          style={styles.searchButton}
+        />
+      </View>
+      {
+        data?.data ? (
+          <View style={styles.foundFriendContainer}>
+            <IconButton
+              icon="account"
+              size={24}
+              style={styles.addButton}
+            />
+            <Text style={styles.foundText}>{phone}</Text>
+          </View>
+        ) : null
+      }
     </View>
   );
 };
@@ -61,25 +77,58 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     marginBottom: 20,
     textAlign: "center",
+    fontWeight: "bold",
+    color: "#333",
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+    borderRadius: 10,
+    padding: 10,
+    elevation: 3,
+  },
+  foundFriendContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginBottom: 20,
+    borderRadius: 10,
+    padding: 10,
+    elevation: 3,
+    backgroundColor: "#fff",
   },
   input: {
+    flex: 1,
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 20,
     paddingHorizontal: 10,
-  },
-  privacyContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  privacyText: {
     fontSize: 16,
+    borderRadius: 8,
+    backgroundColor: "#f1f1f1",
+    marginRight: 10,
+  },
+  searchButton: {
+    backgroundColor: "#608BC1",
+    borderRadius: 50,
+    elevation: 3,
+  },
+  foundText: {
+    verticalAlign: "middle",
+    color: "black",
+    fontSize: 16,
+  },
+  addButton: {
+    backgroundColor: "#608BC1",
+    verticalAlign: "middle",
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
