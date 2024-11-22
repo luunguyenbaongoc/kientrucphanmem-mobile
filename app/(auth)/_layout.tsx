@@ -1,20 +1,14 @@
-import { Redirect, Stack } from "expo-router";
+import { Redirect, router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import { useAuth } from "@/contexts/AuthContext";
+import { STORAGE_KEY } from "@/utils/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 export { ErrorBoundary } from "expo-router";
 
 export default function AuthLayout() {
-  const { accessToken } = useAuth();
-  
-  if (accessToken) {
-    SplashScreen.hideAsync();
-    return <Redirect href="/(tabs)" />;
-  } else {
-    SplashScreen.hideAsync();
-  }
-
   return (
     <Stack>
       <Stack.Screen options={{ headerShown: false }} name="index" />
