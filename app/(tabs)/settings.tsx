@@ -124,7 +124,7 @@ const SettingsScreen = () => {
               ? {
                   uri: `data:image/png;base64, ${profileInfo.avatar}`,
                 }
-              : require("../../assets/images/icon.png")
+              : require("@/assets/images/icon.png")
           }
           style={styles.profileImage}
         />

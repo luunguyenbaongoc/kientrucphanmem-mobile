@@ -105,7 +105,7 @@ const CreateGroupScreen = () => {
               ? {
                   uri: groupImageInfo.uri,
                 }
-              : require("../../assets/images/icon.png")
+              : require("@/assets/images/icon.png")
           }
           style={styles.avatar}
         />

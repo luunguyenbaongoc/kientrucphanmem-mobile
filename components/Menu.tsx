@@ -34,7 +34,8 @@ export const SimpleMenu = ({ items }: SimpleMenuProps) => {
         contentStyle={styles.menuContent}
       >
         {items.map(
-          item => <Menu.Item 
+          (item, index) => <Menu.Item
+            key={index} 
             title={item.title} 
             onPress={() => {
                 router.navigate(item.route)
