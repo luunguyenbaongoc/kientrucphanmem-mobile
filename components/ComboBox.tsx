@@ -30,9 +30,7 @@ export const EditableComboBox = ({ items, placeHolderText, onSelectionChanged }:
     if (!selectedItems.find((f) => f.id === item.id)) {
       const currentItems: EditableComboBoxModelItem[] = [...selectedItems, item];
       setSelectedItems(currentItems);
-      debugger
       if (onSelectionChanged) {
-        debugger;
         onSelectionChanged(currentItems.map((f) => f.id));
       }
     }
@@ -43,7 +41,7 @@ export const EditableComboBox = ({ items, placeHolderText, onSelectionChanged }:
     const currentItems: EditableComboBoxModelItem[] = selectedItems.filter((
       item: EditableComboBoxModelItem) => item.id !== id);
     setSelectedItems(currentItems);
-    debugger
+
     if (onSelectionChanged) {
       onSelectionChanged(currentItems.map((f) => f.id));
     }
