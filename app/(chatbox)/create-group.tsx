@@ -28,9 +28,7 @@ interface GroupAvatarInfo {
 const CreateGroupScreen = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [groupId, setGroupId] = useState('');
   const [groupImageInfo, setGroupImageInfo] = useState<GroupAvatarInfo>({uri: '', fileName: ''});
-  const [queryEnabled, setQueryEnabled] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const toaster = useToast();
 
@@ -51,27 +49,26 @@ const CreateGroupScreen = () => {
     }
   };
 
-  const { isLoading, data: friendList } = useQuery({
-    queryKey: ["findFriendsByText", ""],
-    queryFn: () => friendAPI.findByText({ text: "" }),
-    enabled: queryEnabled,
+  const { isLoading, data } = useQuery({
+    queryKey: ["getFriends"],
+    queryFn: () => friendAPI.getFriends(),
+    enabled: true,
     select: (rs) => {
-      let data: EditableComboBoxModelItem[] = [];
-      rs.data.forEach((item, index) => {
-        data.push({
-          id: index,
+      let result: EditableComboBoxModelItem[] = [];
+      rs.data.forEach(item => {
+        result.push({
+          id: item.to_user_profile.id,
           text: item.to_user_profile.profile[0].fullname,
           avatar: `data:image/png;base64, ${item.to_user_profile.profile[0]?.avatar}`,
         });
       });
-      return data;
+      return result;
     },
   });
 
   const createGroup = useMutation(groupAPI.createGroup, {
     onSuccess: (response) => {
       const { name, id } = response.data;
-      setGroupId(id);
       queryClient.invalidateQueries(["getGroupsByUser", ""]);
       toaster.show({
         message: 'Tạo nhóm thành công',
@@ -124,11 +121,8 @@ const CreateGroupScreen = () => {
         multiline
       />
       <EditableComboBox 
-        items={friendList as EditableComboBoxModelItem[]}
+        items={data? data as EditableComboBoxModelItem[]: []}
         placeHolderText="Tìm bạn"
-        onFocus={() => {
-          setQueryEnabled(true);
-        }}
       />
       <Button title="Tạo nhóm" onPress={() => {
         createGroup.mutate({ name, description });

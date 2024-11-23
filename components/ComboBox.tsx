@@ -11,7 +11,7 @@ import {
 import { Chip } from "react-native-paper";
 
 export interface EditableComboBoxModelItem {
-  id: number;
+  id: string;
   text: string;
   avatar: string;
 };
@@ -19,10 +19,9 @@ export interface EditableComboBoxModelItem {
 interface EditableComboBoxProps {
   items: EditableComboBoxModelItem[];
   placeHolderText?: string;
-  onFocus?: () => void;
 };
 
-export const EditableComboBox = ({ items, placeHolderText, onFocus }: EditableComboBoxProps) => {
+export const EditableComboBox = ({ items, placeHolderText }: EditableComboBoxProps) => {
   const [query, setQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<EditableComboBoxModelItem[]>([]);
 
@@ -33,7 +32,7 @@ export const EditableComboBox = ({ items, placeHolderText, onFocus }: EditableCo
     setQuery("");
   };
 
-  const handleRemoveItem = (id: number) => {
+  const handleRemoveItem = (id: string) => {
     setSelectedItems(selectedItems.filter((item: EditableComboBoxModelItem) => item.id !== id));
   };
 
@@ -61,7 +60,6 @@ export const EditableComboBox = ({ items, placeHolderText, onFocus }: EditableCo
         placeholder={placeHolderText}
         value={query}
         onChangeText={(text) => setQuery(text)}
-        onBlur={onFocus}
       />
       <FlatList
         data={filteredItems}
