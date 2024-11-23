@@ -1,4 +1,4 @@
-import { Chatbox } from '@/components/ChatBox';
+import { ChatBox } from '@/components/ChatBox';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
@@ -35,7 +35,7 @@ const UserChatBoxScreen = () => {
         />
       </View>
       <SafeAreaView style={styles.detailContainer}>
-        <Chatbox />
+        <ChatBox />
       </SafeAreaView>
     </View>
   );

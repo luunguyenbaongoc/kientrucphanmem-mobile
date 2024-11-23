@@ -1,4 +1,4 @@
-import { Chatbox } from '@/components/ChatBox';
+import { ChatBox } from '@/components/ChatBox';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
@@ -7,37 +7,7 @@ import { IconButton } from 'react-native-paper';
 const GroupChatBoxScreen = () => {
   const { groupName, groupId } = useLocalSearchParams();
   return (
-    <View style={styles.detailContainer}>
-      <Text style={styles.detailText}>{groupName}</Text>
-      <View style={styles.phoneCall}>
-        <IconButton
-          icon="phone"
-          size={30}
-          iconColor="blue"
-          onPress={() => {}}
-        />
-        <IconButton
-          icon="video"
-          size={30}
-          iconColor="blue"
-          onPress={() => {}}
-        />
-        <IconButton
-          icon="cog"
-          size={30}
-          iconColor="blue"
-          onPress={() => {
-            router.push({
-              pathname: '/group-setting',
-              params: { groupName, groupId }
-            })
-          }}
-        />
-      </View>
-      <SafeAreaView style={styles.detailContainer}>
-        <Chatbox />
-      </SafeAreaView>
-    </View>
+    <ChatBox />
   );
 };
 
