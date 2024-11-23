@@ -19,27 +19,39 @@ export interface EditableComboBoxModelItem {
 interface EditableComboBoxProps {
   items: EditableComboBoxModelItem[];
   placeHolderText?: string;
+  onSelectionChanged?: (ids: string[]) => void;
 };
 
-export const EditableComboBox = ({ items, placeHolderText }: EditableComboBoxProps) => {
+export const EditableComboBox = ({ items, placeHolderText, onSelectionChanged }: EditableComboBoxProps) => {
   const [query, setQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<EditableComboBoxModelItem[]>([]);
 
   const handleSelectItem = (item: EditableComboBoxModelItem) => {
     if (!selectedItems.find((f) => f.id === item.id)) {
-      setSelectedItems([...selectedItems, item]);
+      const currentItems: EditableComboBoxModelItem[] = [...selectedItems, item];
+      setSelectedItems(currentItems);
+      debugger
+      if (onSelectionChanged) {
+        debugger;
+        onSelectionChanged(currentItems.map((f) => f.id));
+      }
     }
     setQuery("");
   };
 
   const handleRemoveItem = (id: string) => {
-    setSelectedItems(selectedItems.filter((item: EditableComboBoxModelItem) => item.id !== id));
+    const currentItems: EditableComboBoxModelItem[] = selectedItems.filter((
+      item: EditableComboBoxModelItem) => item.id !== id);
+    setSelectedItems(currentItems);
+    debugger
+    if (onSelectionChanged) {
+      onSelectionChanged(currentItems.map((f) => f.id));
+    }
   };
 
   const filteredItems = items.filter((item: EditableComboBoxModelItem) =>
     item.text.toLowerCase().includes(query.toLowerCase())
   );
-
 
   return (
     <View style={styles.container}>

@@ -29,6 +29,7 @@ const CreateGroupScreen = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [groupImageInfo, setGroupImageInfo] = useState<GroupAvatarInfo>({uri: '', fileName: ''});
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const queryClient = useQueryClient();
   const toaster = useToast();
 
@@ -77,7 +78,7 @@ const CreateGroupScreen = () => {
       });
       router.push({
         pathname: "/(chatbox)/group-chatbox",
-        params: { groupName: name },
+        params: { groupName: name, groupId: id},
       });
     },
     onError: (error: any) => {
@@ -123,9 +124,12 @@ const CreateGroupScreen = () => {
       <EditableComboBox 
         items={data? data as EditableComboBoxModelItem[]: []}
         placeHolderText="Tìm bạn"
+        onSelectionChanged={(ids: string[]) => {
+          setSelectedIds(ids);
+        }}
       />
       <Button title="Tạo nhóm" onPress={() => {
-        createGroup.mutate({ name, description });
+        createGroup.mutate({ name, description, user_ids: selectedIds });
       }} />
     </View>
   );

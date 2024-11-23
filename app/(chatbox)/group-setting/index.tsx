@@ -45,6 +45,7 @@ const RenderItem = ({ groupId, groupName, item }: ItemInfo) => {
         style={styles.iconContainer}
         onPress={() => {
           const action = GROUP_SETTING_ITEM_API_MAP.get(item.id);
+          debugger;
           if (action) {
             action.mutate(groupId);
           }

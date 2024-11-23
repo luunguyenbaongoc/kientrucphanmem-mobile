@@ -6,7 +6,6 @@ import { IconButton } from 'react-native-paper';
 
 const GroupChatBoxScreen = () => {
   const { groupName, groupId } = useLocalSearchParams();
-
   return (
     <View style={styles.detailContainer}>
       <Text style={styles.detailText}>{groupName}</Text>
