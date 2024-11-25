@@ -1,6 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import EmojiSelector from 'react-native-emoji-selector';
 import { GiftedChat } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -45,9 +46,19 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
     alert('Attach file clicked!'); // File picker logic here
   };
 
+  const hanldeTextEmoji = (emoji: string) => {
+    const textMessage = {
+      _id: Date.now(),
+      text: emoji,
+      createdAt: new Date(),
+      user: { _id: 1 },
+    };
+    setMessages((prevMessages) => GiftedChat.append(prevMessages, [textMessage]));
+    setShowEmojiPicker(false);
+  }
+
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Hội thoại</Text>
         <View style={styles.headerIcons}>
@@ -67,7 +78,6 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
         </View>
       </View>
 
-      {/* Chat Area */}
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
@@ -89,25 +99,16 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
           </View>
         )}
       />
-
-      {/* Emoji Picker */}
-      {/* {showEmojiPicker && (
-        <View style={styles.emojiPickerContainer}>
-          <EmojiPicker
-            onEmojiSelected={(emoji) => {
-              const textMessage = {
-                _id: Date.now(),
-                text: emoji,
-                createdAt: new Date(),
-                user: { _id: 1 },
-              };
-              setMessages((prevMessages) => GiftedChat.append(prevMessages, [textMessage]));
-              setShowEmojiPicker(false);
-            }}
-            onClose={() => setShowEmojiPicker(false)}
+      {showEmojiPicker && 
+        (
+          <EmojiSelector
+            onEmojiSelected={hanldeTextEmoji}
+            showSearchBar={true}
+            showTabs={true}
+            columns={6}
           />
-        </View>
-      )} */}
+      )
+      }
     </View>
   );
 };
@@ -151,18 +152,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     elevation: 2,
-  },
-  emojiPickerContainer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 10,
-  },
+  }
 });
