@@ -1,10 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Image } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
 import * as ImagePicker from 'expo-image-picker';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export const ChatBox = () => {
+interface ChatBoxProps {
+  onSetting?: () => void;
+};
+
+export const ChatBox = ({ onSetting }: ChatBoxProps) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -30,7 +34,7 @@ export const ChatBox = () => {
         _id: Date.now(),
         text: '',
         createdAt: new Date(),
-        user: { _id: 1, name: 'You' },
+        user: { _id: 1, name: 'Bạn' },
         image: imageUri,
       };
       setMessages((prevMessages) => GiftedChat.append(prevMessages, [newMessage]));
@@ -53,7 +57,11 @@ export const ChatBox = () => {
           <TouchableOpacity style={styles.iconButton}>
             <Icon name="phone" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => {
+              if (onSetting) onSetting();
+            }}>
             <Icon name="settings" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
