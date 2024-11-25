@@ -1,3 +1,4 @@
+import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -43,7 +44,19 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
   };
 
   const attachFile = async () => {
-    alert('Attach file clicked!'); // File picker logic here
+    try {
+      const result: any = await DocumentPicker.getDocumentAsync({
+        type: '*/*', // You can specify MIME types like "image/*", "application/pdf", etc.
+      });
+  
+      if (result.type === 'success') {
+        console.log('Selected File:', result);
+      } else {
+        console.log('User canceled file picker');
+      }
+    } catch (error) {
+      console.error('Error picking document:', error);
+    }
   };
 
   const hanldeTextEmoji = (emoji: string) => {
