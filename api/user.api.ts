@@ -4,7 +4,7 @@ import http from "../utils/http";
 
 export const USER_URL = {
   USER_PROFILE: '/user/me/profiles',
-  PROFILE: '/profile/profiles/%',
+  PROFILE: '/profile',
 };
 
 export const userAPI = {
@@ -12,11 +12,6 @@ export const userAPI = {
     return http.get<ProfileResponse[]>(USER_URL.USER_PROFILE);
   },
   updateProfile(updateProfileDto: UpdateProfileDto) {
-    return http.patch<ProfileResponse>(
-      USER_URL.PROFILE.replace(
-        "%", updateProfileDto.profileId), { 
-          fullname: updateProfileDto.fullname, 
-          avatar: updateProfileDto.avatar 
-        });
+    return http.patch<ProfileResponse>(USER_URL.PROFILE, updateProfileDto);
   }
 };
