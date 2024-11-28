@@ -1,8 +1,24 @@
+import { STORAGE_KEY } from "@/utils/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
-export default function AuthRootScreen() {
+export default function AppSplashScreen() {
+  const checkAccessToken = async () => {
+    const access_token = await AsyncStorage.getItem(STORAGE_KEY.ACCESS_TOKEN);    
+    if (access_token) {
+      router.push("/(tabs)");
+    } else {
+      router.push("/(auth)");
+    }
+  };
+
+  useEffect(() => {
+    checkAccessToken();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.image_container}>
@@ -14,26 +30,6 @@ export default function AuthRootScreen() {
       </View>
       <View style={styles.content}>
         <Text style={styles.content_title}>Zalỏ</Text>
-        <View style={styles.button_container}>
-          <Button
-            textColor="white"
-            style={[styles.login, styles.button]}
-            onPress={() => {
-              router.navigate("./login");
-            }}
-          >
-            Đăng nhập
-          </Button>
-          <Button
-            textColor="white"
-            style={[styles.register, styles.button]}
-            onPress={() => {
-              router.navigate("./register");
-            }}
-          >
-            Tạo tài khoản mới
-          </Button>
-        </View>
       </View>
     </View>
   );
@@ -44,11 +40,17 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image_container: {
-    height: "60%",
+    height: "100%",
   },
   image: { height: "100%", width: "100%" },
   content: {
-    height: "40%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
   },
   content_title: {
     color: "#0190f3",

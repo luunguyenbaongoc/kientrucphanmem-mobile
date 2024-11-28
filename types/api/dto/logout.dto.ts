@@ -1,4 +1,4 @@
 export class LogOutDto {
   userId!: string;
-  refreshToken!: string;
+  refresh_token!: string;
 }

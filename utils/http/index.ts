@@ -3,6 +3,7 @@ import { STORAGE_KEY } from "../constants/";
 // import { notificationError } from "./notification";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authAPI } from "@/api";
+import { router } from "expo-router";
 
 export class Http {
   public instance: AxiosInstance;
@@ -13,6 +14,7 @@ export class Http {
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         _retry: true,
       },
     });
@@ -28,7 +30,7 @@ export class Http {
 
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error.response?.data)
     );
 
     let isRefreshToken = false;
@@ -47,8 +49,8 @@ export class Http {
           );
           const id = await AsyncStorage.getItem(STORAGE_KEY.ID);
           if (!refreshToken || !id) {
-            localStorage.clear();
-            return (window.location.href = "/login");
+            await AsyncStorage.clear();
+            return router.push("/(auth)");
           }
 
           if (!isRefreshToken) {
@@ -61,17 +63,21 @@ export class Http {
                 refresh_token: refreshToken,
                 is_new_refresh_token: false,
               })
-              .then((response) => {
+              .then(async (response) => {
+                if (!response.data) {
+                  await AsyncStorage.clear();
+                  return router.push("/(auth)");
+                }
                 requestsToRefresh.forEach((callback) => {
                   callback(response.data.access_token);
                 });
                 // localStorage.setItem(STORAGE_KEY.ACCESS_TOKEN, response.data.access_token);
                 // return this.instance.request(config);
               })
-              .catch((error) => {
+              .catch(async (error) => {
                 requestsToRefresh.forEach((cb) => cb(null));
-                localStorage.clear();
-                return (window.location.href = "/login");
+                await AsyncStorage.clear();
+                return router.push("/(auth)");
               })
               .finally(() => {
                 // 5. After that, to clear all setup
@@ -96,7 +102,7 @@ export class Http {
         }
 
         // notificationError("", error.response?.data);
-        return Promise.reject(error);
+        return Promise.reject(error.response?.data);
       }
     );
   }

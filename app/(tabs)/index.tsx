@@ -1,20 +1,21 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { router, useRouter } from 'expo-router';
+import { SimpleMenu } from '@/components/Menu';
+import React from 'react';
+import { 
+  FlatList, 
+  Image, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity, 
+  View 
+} from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import { DropDownMenu } from '@/components/Menu';
+import { router } from 'expo-router';
+import { MESSAGE_MENU_ITEMS } from '@/utils/constants/message-menu-items';
 
 const data = [
   { id: '1', name: 'John Doe', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
   { id: '2', name: 'Jane Smith', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
   { id: '3', name: 'Alice Johnson', avatar: 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg' },
-];
-
-const TOOL_MENU_ITEMS = [
-  { title: 'Tạo nhóm', url: "/groups/group", onPress: () => {
-    router.navigate('/(chatbox)/create-group');
-  }},
-  { title: 'Thêm bạn', url: "/user/add-friend" },
 ];
 
 interface ListItemProps {
@@ -33,33 +34,25 @@ const ListItem = ({ name, avatar, onPress }: ListItemProps) => (
 );
 
 const FriendListSreen = () => {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  const handleSearchFriend = (text: string) => {
-    // TODO: Implement search logic
-    console.log('Search:', text);
-    // Replace with actual search logic when ready
+  const handleSearchMessage = (text: string) => {
     setSearchQuery(text);
   };
 
-  useEffect(() => {
-    // Add any cleanup logic here, such as subscriptions or timers
-    // Request getting friend list -> data.
-  })
-
   return (
     <View>
-      <View style={styles.toolContainer}>
+      <View style={styles.barContainer}>
         <Searchbar
           placeholder="Search"
-          onChangeText={handleSearchFriend}
+          onChangeText={handleSearchMessage}
           value={searchQuery}
           style={styles.searchBar}
         />
-        <DropDownMenu items={TOOL_MENU_ITEMS}/>
+        <SimpleMenu items={MESSAGE_MENU_ITEMS}/>
       </View>
       <FlatList
+        scrollEnabled={true}
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -80,15 +73,19 @@ const FriendListSreen = () => {
 };
 
 const styles = StyleSheet.create({
-  searchBar: {
-    flex: 1,
-    marginRight: 10,
-  },
-  toolContainer: {
+  barContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchBar: {
+    flex: 12,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemContainer: {
     flexDirection: 'row',

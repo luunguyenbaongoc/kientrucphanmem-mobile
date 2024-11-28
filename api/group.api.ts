@@ -1,13 +1,29 @@
-import http from "../utils/http";
-import { GroupResponse } from "../types/api/response";
 import { CreateGroupDto } from "@/types/api/dto";
+import { FindByUserDto, UploadGroupImageDto } from "@/types/api/dto/group";
+import { GroupMemberResponse } from "@/types/api/response/group.member.response";
+import { GroupResponse } from "../types/api/response";
+import http from "../utils/http";
 
 export const GROUP_URL = {
-  GROUP: '/group/groups',
+  GROUP: "/group",
+  GROUP_LIST: "/group-members/list-by-user",
+  GROUP_UPLOAD_AVATAR: "/group/%/upload-image"
 };
 
 export const groupAPI = {
   createGroup(createGroupDto: CreateGroupDto) {
-    return http.patch<GroupResponse>(GROUP_URL.GROUP, createGroupDto);
+    return http.post<GroupResponse>(GROUP_URL.GROUP, createGroupDto);
+  },
+
+  getGroups(findByUserDto: FindByUserDto) {
+    return http.post<GroupMemberResponse>(GROUP_URL.GROUP_LIST, findByUserDto);
+  },
+
+  uploadAvatar(uploadImageDto: UploadGroupImageDto) {
+    return http.post<GroupResponse>(
+      GROUP_URL.GROUP_UPLOAD_AVATAR.replace("%", uploadImageDto.id), uploadImageDto.formData, { 
+        headers: {'Content-Type': 'multipart/form-data',
+        }
+      });
   },
 };

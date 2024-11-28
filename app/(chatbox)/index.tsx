@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { ChatBox } from '@/components/ChatBox';
 import { useLocalSearchParams } from 'expo-router';
-import { IconButton, MD3Colors } from 'react-native-paper';
-import { Chatbox } from '@/components/ChatBox';
+import React, { useEffect } from 'react';
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 const UserChatBoxScreen = () => {
   const { userId, name } = useLocalSearchParams();
@@ -35,7 +35,7 @@ const UserChatBoxScreen = () => {
         />
       </View>
       <SafeAreaView style={styles.detailContainer}>
-        <Chatbox />
+        <ChatBox />
       </SafeAreaView>
     </View>
   );

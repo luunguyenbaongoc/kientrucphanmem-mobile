@@ -1,22 +1,21 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+// import {
+//   DarkTheme,
+//   DefaultTheme,
+//   ThemeProvider,
+// } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, SplashScreen, router, Redirect } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 // import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { STORAGE_KEY } from "@/utils/constants";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import { ToastProvider } from "react-native-paper-toast";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync().catch((e) => { console.log(e) });;
+// SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -30,19 +29,20 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(chatbox)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+    <PaperProvider theme={DefaultTheme}>
+      <ToastProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(chatbox)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </QueryClientProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </PaperProvider>
   );
 }
