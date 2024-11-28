@@ -31,25 +31,33 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider theme={DefaultTheme}>
-      <ToastProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <ChatProvider>
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="(chatbox)"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-            </ChatProvider>
-          </QueryClientProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </PaperProvider>
+    <SafeAreaProvider>
+      <PaperProvider theme={DefaultTheme}>
+        <ToastProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <ChatProvider>
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(chatbox)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+              </ChatProvider>
+            </QueryClientProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </PaperProvider>
+    </SafeAreaProvider>
   );
 }
