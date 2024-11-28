@@ -1,4 +1,4 @@
-import { ChatBoxComponent } from "@/components/ChatBox";
+import ChatBoxComponent from "@/components/ChatBox";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 

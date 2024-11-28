@@ -1,4 +1,4 @@
-import { ChatBoxComponent } from "@/components/ChatBox";
+import ChatBoxComponent from "@/components/ChatBox";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
@@ -15,6 +15,7 @@ const UserChatBoxScreen = ({}) => {
   return (
     <ChatBoxComponent
       name={name}
+      chatboxId={chatboxId}
     />
   );
 };

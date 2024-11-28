@@ -2,7 +2,7 @@
 import { useChat } from "@/contexts/ChatContext";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -12,27 +12,72 @@ import {
   View,
 } from "react-native";
 import EmojiSelector from "react-native-emoji-selector";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, IMessage } from "react-native-gifted-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "react-query";
+import { chatAPI } from "@/api/chat.api";
 
 interface ChatBoxProps {
   name?: string;
+  chatboxId?: string;
   onSetting?: () => void;
 }
 
-export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
+const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const { chatProfile } = useChat();
+  const { chatProfile, chatboxId, toUserId, toGroupId } = useChat();
+  const { userId } = useAuth();
 
   // const onSend = useCallback((newMessages: any = []) => {
   //   setMessages((previousMessages) =>
   //     GiftedChat.append(previousMessages, newMessages)
   //   );
   // }, []);
+
+  const { isLoading, data, refetch } = useQuery({
+    queryKey: ["ChatDetail", toUserId, toGroupId, chatboxId],
+    queryFn: () =>
+      chatAPI.chatDetail({
+        chat_box_id: chatboxId,
+        to_group: toGroupId,
+        to_user: toUserId,
+      }),
+    select: (rs) => {
+      return rs.data;
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    refetch();
+    // return () => {
+    //   iMessages = [];
+    // }
+  }, []);
+
+  const iMessages = useMemo(() => {
+    if (data) {
+      const iMessages: IMessage[] = [];
+      for (let i = data.length - 1; i >= 0; i--) {
+        const item = data[i];
+        const iMessage: IMessage = {
+          _id: item.id,
+          text: item.chat_log.content,
+          createdAt: item.chat_log.created_date,
+          user: {
+            _id: item.chat_log.owner_id,
+          },
+        };
+        iMessages.push(iMessage);
+      }
+      return iMessages;
+    }
+  }, [data]);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -76,7 +121,7 @@ export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
     }
   };
 
-  const hanldeTextEmoji = (emoji: string) => {
+  const handleTextEmoji = (emoji: string) => {
     const textMessage = {
       _id: Date.now(),
       text: emoji,
@@ -94,10 +139,9 @@ export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
   };
 
   const renderMessage = (props) => {
-    console.log(props.currentMessage)
     const { currentMessage } = props;
 
-    if (currentMessage.user._id === 1) {
+    if (currentMessage.user._id === userId) {
       return (
         <View
           style={{
@@ -110,14 +154,39 @@ export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
             {...props}
             wrapperStyle={{
               right: {
-                backgroundColor: "black",
+                backgroundColor: "#8bbbf7",
                 marginRight: 12,
                 marginVertical: 12,
               },
             }}
             textStyle={{
               right: {
-                color: "#fff",
+                color: "black",
+              },
+            }}
+          />
+        </View>
+      );
+    } else {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "flex-start",
+          }}
+        >
+          <Bubble
+            {...props}
+            wrapperStyle={{
+              left: {
+                marginLeft: 12,
+                marginVertical: 12,
+              },
+            }}
+            textStyle={{
+              left: {
+                color: "black",
               },
             }}
           />
@@ -127,82 +196,22 @@ export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
   };
 
   const submitHandler = () => {
-    const message = {
-      _id: Math.random().toString(36).toString(7),
-      text: inputMessage,
-      createdAt: new Date().getTime(),
-      user: {
-        _id: 1,
-      },
-    };
-
-    setMessages((previousMessage) =>
-      GiftedChat.append(previousMessage, [message])
-    );
-
-    setInputMessage("");
+    //TODO: call api to send message
+    // const message = {
+    //   _id: Math.random().toString(36).toString(7),
+    //   text: inputMessage,
+    //   createdAt: new Date().getTime(),
+    //   user: {
+    //     _id: userId,
+    //   },
+    // };
+    // setMessages((previousMessage) =>
+    //   GiftedChat.append(previousMessage, [message])
+    // );
+    // setInputMessage("");
   };
 
   return (
-    // <View style={styles.container}>
-    //   <View style={styles.header}>
-    //     <View style={{ flexDirection: "row", alignItems: 'center' }}>
-    //       <Image
-    //         source={{
-    //           uri: `data:image/png;base64, ${chatProfile.avatar}`,
-    //         }}
-    //         style={styles.avatar}
-    //       />
-    //       <Text style={styles.headerText}>{name}</Text>
-    //     </View>
-    //     <View style={styles.headerIcons}>
-    //       <TouchableOpacity style={styles.iconButton}>
-    //         <Icon name="video-call" size={24} color="#888" />
-    //       </TouchableOpacity>
-    //       <TouchableOpacity style={styles.iconButton}>
-    //         <Icon name="phone" size={24} color="#888" />
-    //       </TouchableOpacity>
-    //       <TouchableOpacity
-    //         style={styles.iconButton}
-    //         onPress={() => {
-    //           if (onSetting) onSetting();
-    //         }}
-    //       >
-    //         <Icon name="settings" size={24} color="#888" />
-    //       </TouchableOpacity>
-    //     </View>
-    //   </View>
-
-    //   <GiftedChat
-    //     messages={messages}
-    //     onSend={(messages) => {console.log(messages[0])}}
-    //     user={{ _id: 1 }}
-    //     renderActions={() => (
-    //       <View style={styles.actions}>
-    //         <TouchableOpacity
-    //           style={styles.actionButton}
-    //           onPress={() => setShowEmojiPicker(!showEmojiPicker)}
-    //         >
-    //           <Icon name="emoji-emotions" size={28} color="#888" />
-    //         </TouchableOpacity>
-    //         <TouchableOpacity style={styles.actionButton} onPress={pickImage}>
-    //           <Icon name="image" size={28} color="#888" />
-    //         </TouchableOpacity>
-    //         <TouchableOpacity style={styles.actionButton} onPress={attachFile}>
-    //           <Icon name="attach-file" size={28} color="#888" />
-    //         </TouchableOpacity>
-    //       </View>
-    //     )}
-    //   />
-    //   {showEmojiPicker && (
-    //     <EmojiSelector
-    //       onEmojiSelected={hanldeTextEmoji}
-    //       showSearchBar={true}
-    //       showTabs={true}
-    //       columns={6}
-    //     />
-    //   )}
-    // </View>
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <View
         style={{
@@ -220,7 +229,7 @@ export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
             onPress={() => {
               router.back();
             }}
-            style={{ marginHorizontal: 12 }}
+            style={{ marginRight: 18 }}
           >
             <FontAwesome name="arrow-left" size={22} color={"gray"} />
           </TouchableOpacity>
@@ -250,13 +259,13 @@ export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
       </View>
 
       <GiftedChat
-        messages={messages}
+        messages={iMessages}
         renderInputToolbar={() => {
           return null;
         }}
-        user={{ _id: 1 }}
+        user={{ _id: userId }}
         minInputToolbarHeight={0}
-        renderMessage={renderMessage}
+        renderMessage={(props) => renderMessage(props)}
       ></GiftedChat>
 
       <View style={styles.inputContainer}>
@@ -358,3 +367,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
   },
 });
+
+export default memo(ChatBoxComponent);
