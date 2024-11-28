@@ -1,16 +1,20 @@
-import { ChatBox } from '@/components/ChatBox';
-import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import { ChatBoxComponent } from "@/components/ChatBox";
+import { router, useLocalSearchParams } from "expo-router";
+import React from "react";
 
 const GroupChatBoxScreen = () => {
-  const { groupName, groupId } = useLocalSearchParams();
+  const { groupName, groupId } = useLocalSearchParams<{
+    groupName: string;
+    groupId: string;
+  }>();
   return (
-    <ChatBox
+    <ChatBoxComponent
+      name={groupName}
       onSetting={() => {
         router.push({
-          pathname: '/group-setting',
-          params: { groupName, groupId }
-        })
+          pathname: "/group-setting",
+          params: { groupName, groupId },
+        });
       }}
     />
   );

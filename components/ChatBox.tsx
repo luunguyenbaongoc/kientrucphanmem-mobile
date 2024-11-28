@@ -1,27 +1,33 @@
 // import * as DocumentPicker from 'expo-document-picker';
-import * as ImagePicker from 'expo-image-picker';
-import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import EmojiSelector from 'react-native-emoji-selector';
-import { GiftedChat } from 'react-native-gifted-chat';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useChat } from "@/contexts/ChatContext";
+import * as ImagePicker from "expo-image-picker";
+import React, { useCallback, useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import EmojiSelector from "react-native-emoji-selector";
+import { GiftedChat } from "react-native-gifted-chat";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 interface ChatBoxProps {
+  name?: string;
   onSetting?: () => void;
-};
+}
 
-export const ChatBox = ({ onSetting }: ChatBoxProps) => {
+export const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const { chatProfile } = useChat();
 
-  const onSend = useCallback((newMessages: any = []) => {
-    setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
-  }, []);
+  // const onSend = useCallback((newMessages: any = []) => {
+  //   setMessages((previousMessages) =>
+  //     GiftedChat.append(previousMessages, newMessages)
+  //   );
+  // }, []);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access media library is required!');
+    if (status !== "granted") {
+      alert("Permission to access media library is required!");
       return;
     }
 
@@ -34,12 +40,14 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
       const imageUri = result.assets[0].uri;
       const newMessage = {
         _id: Date.now(),
-        text: '',
+        text: "",
         createdAt: new Date(),
-        user: { _id: 1, name: 'Bạn' },
+        user: { _id: 1, name: "Bạn" },
         image: imageUri,
       };
-      setMessages((prevMessages) => GiftedChat.append(prevMessages, [newMessage]));
+      setMessages((prevMessages) =>
+        GiftedChat.append(prevMessages, [newMessage])
+      );
     }
   };
 
@@ -48,14 +56,13 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
       // const result: any = await DocumentPicker.getDocumentAsync({
       //   type: '*/*', // You can specify MIME types like "image/*", "application/pdf", etc.
       // });
-  
       // if (result.type === 'success') {
       //   console.log('Selected File:', result);
       // } else {
       //   console.log('User canceled file picker');
       // }
     } catch (error) {
-      console.error('Error picking document:', error);
+      console.error("Error picking document:", error);
     }
   };
 
@@ -66,34 +73,45 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
       createdAt: new Date(),
       user: { _id: 1 },
     };
-    setMessages((prevMessages) => GiftedChat.append(prevMessages, [textMessage]));
+    setMessages((prevMessages) =>
+      GiftedChat.append(prevMessages, [textMessage])
+    );
     setShowEmojiPicker(false);
-  }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Hội thoại</Text>
+        <View style={{ flexDirection: "row", alignItems: 'center' }}>
+          <Image
+            source={{
+              uri: `data:image/png;base64, ${chatProfile.avatar}`,
+            }}
+            style={styles.avatar}
+          />
+          <Text style={styles.headerText}>{name}</Text>
+        </View>
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.iconButton}>
-            <Icon name="video-call" size={24} color="#fff" />
+            <Icon name="video-call" size={24} color="#888" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}>
-            <Icon name="phone" size={24} color="#fff" />
+            <Icon name="phone" size={24} color="#888" />
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.iconButton}
             onPress={() => {
               if (onSetting) onSetting();
-            }}>
-            <Icon name="settings" size={24} color="#fff" />
+            }}
+          >
+            <Icon name="settings" size={24} color="#888" />
           </TouchableOpacity>
         </View>
       </View>
 
       <GiftedChat
         messages={messages}
-        onSend={(messages) => onSend(messages)}
+        onSend={(messages) => {console.log(messages[0])}}
         user={{ _id: 1 }}
         renderActions={() => (
           <View style={styles.actions}>
@@ -112,16 +130,14 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
           </View>
         )}
       />
-      {showEmojiPicker && 
-        (
-          <EmojiSelector
-            onEmojiSelected={hanldeTextEmoji}
-            showSearchBar={true}
-            showTabs={true}
-            columns={6}
-          />
-      )
-      }
+      {showEmojiPicker && (
+        <EmojiSelector
+          onEmojiSelected={hanldeTextEmoji}
+          showSearchBar={true}
+          showTabs={true}
+          columns={6}
+        />
+      )}
     </View>
   );
 };
@@ -129,41 +145,47 @@ export const ChatBox = ({ onSetting }: ChatBoxProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f3f5',
+    backgroundColor: "#f2f3f5",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#6200ea',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff",
     padding: 10,
     elevation: 5,
   },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12
+  },
   headerText: {
-    color: '#fff',
+    color: "gray",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   headerIcons: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   iconButton: {
     marginHorizontal: 5,
     padding: 8,
-    backgroundColor: '#7e3ff2',
+    backgroundColor: "#fff",
     borderRadius: 50,
   },
   actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 5,
     paddingVertical: 5,
   },
   actionButton: {
     marginHorizontal: 5,
     padding: 8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 20,
     elevation: 2,
-  }
+  },
 });
