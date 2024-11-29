@@ -18,6 +18,7 @@ import { ChatBox } from "@/types/entities";
 import { wp } from "@/helpers";
 import moment from "moment";
 import "moment/locale/vi"; // without this line it didn't work
+import { useToast } from "react-native-paper-toast";
 moment.locale("vi");
 
 interface ListItemProps {
@@ -91,6 +92,7 @@ const FriendListSreen = () => {
     setChatProfile,
   } = useChat();
   const queryClient = useQueryClient();
+  const toaster = useToast();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["GetChatBoxListByUser"],
@@ -137,7 +139,11 @@ const FriendListSreen = () => {
       }
     },
     onError: (err: any) => {
-      // enqueueSnackbar(err, { variant: "error" });
+      toaster.show({
+        message: err,
+        duration: 2000,
+        type: "error",
+      });
     },
   });
 

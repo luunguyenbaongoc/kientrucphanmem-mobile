@@ -2,7 +2,14 @@
 import { useChat } from "@/contexts/ChatContext";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   Image,
   StyleSheet,
@@ -17,8 +24,54 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { chatAPI } from "@/api/chat.api";
+import { useToast } from "react-native-paper-toast";
+import { ChatLogContentTypeCode } from "@/utils/enums";
+
+interface ChatInputProps {
+  reset?: number;
+  onSubmit?: (text: string) => void;
+}
+
+const ChatInput: FC<ChatInputProps> = (props) => {
+  const [inputMessage, setInputMessage] = useState("");
+
+  useEffect(() => {
+    setInputMessage("");
+  }, [props.reset]);
+  const handleInputText = (text: string) => {
+    setInputMessage(text);
+  };
+
+  const handleOnPressSendButton = () => {
+    if (props.onSubmit) {
+      props.onSubmit(inputMessage);
+    }
+  };
+
+  return (
+    <View style={styles.inputContainer}>
+      <View style={styles.inputMessageContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập tin nhắn"
+          placeholderTextColor="black"
+          value={inputMessage}
+          onChangeText={handleInputText}
+        />
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={handleOnPressSendButton}
+            style={styles.sendButton}
+          >
+            <FontAwesome name="send" size={22} color={"gray"} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 interface ChatBoxProps {
   name?: string;
@@ -28,16 +81,12 @@ interface ChatBoxProps {
 
 const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
   const [messages, setMessages] = useState<any[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
+  const [resetChatInput, setResetChatInput] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { chatProfile, chatboxId, toUserId, toGroupId } = useChat();
   const { userId } = useAuth();
-
-  // const onSend = useCallback((newMessages: any = []) => {
-  //   setMessages((previousMessages) =>
-  //     GiftedChat.append(previousMessages, newMessages)
-  //   );
-  // }, []);
+  const toaster = useToast();
+  const queryClient = useQueryClient();
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: ["ChatDetail", toUserId, toGroupId, chatboxId],
@@ -48,19 +97,46 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
         to_user: toUserId,
       }),
     select: (rs) => {
+      if (rs.data && genMessages) {
+        genMessages(rs.data);
+      }
       return rs.data;
     },
     enabled: false,
   });
 
+  const insertChatLog = useMutation(chatAPI.insertChatlog, {
+    onSuccess: (response) => {
+      const { id, content, owner_id, created_date } = response.data;
+
+      if (id) {
+        queryClient.invalidateQueries(["GetChatBoxListByUser"]);
+        // refetch();
+        const iMessage: IMessage = {
+          _id: id,
+          text: content,
+          createdAt: created_date,
+          user: {
+            _id: owner_id,
+          },
+        };
+        setMessages((prev) => [iMessage, ...prev]);
+      }
+    },
+    onError: (error: any) => {
+      toaster.show({
+        message: error,
+        duration: 2000,
+        type: "error",
+      });
+    },
+  });
+
   useEffect(() => {
     refetch();
-    // return () => {
-    //   iMessages = [];
-    // }
   }, []);
 
-  const iMessages = useMemo(() => {
+  const genMessages = (data) => {
     if (data) {
       const iMessages: IMessage[] = [];
       for (let i = data.length - 1; i >= 0; i--) {
@@ -75,9 +151,30 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
         };
         iMessages.push(iMessage);
       }
+      setMessages([...iMessages]);
       return iMessages;
     }
-  }, [data]);
+  };
+
+  // let iMessages = useMemo(() => {
+  //   if (data) {
+  //     const iMessages: IMessage[] = [];
+  //     for (let i = data.length - 1; i >= 0; i--) {
+  //       const item = data[i];
+  //       const iMessage: IMessage = {
+  //         _id: item.id,
+  //         text: item.chat_log.content,
+  //         createdAt: item.chat_log.created_date,
+  //         user: {
+  //           _id: item.chat_log.owner_id,
+  //         },
+  //       };
+  //       iMessages.push(iMessage);
+  //     }
+  //     return iMessages;
+  //   }
+  // }, [data]);
+  // let iMessages = genMessages();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -132,10 +229,6 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
       GiftedChat.append(prevMessages, [textMessage])
     );
     setShowEmojiPicker(false);
-  };
-
-  const handleInputText = (text: string) => {
-    setInputMessage(text);
   };
 
   const renderMessage = (props) => {
@@ -195,20 +288,19 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
     }
   };
 
-  const submitHandler = () => {
-    //TODO: call api to send message
-    // const message = {
-    //   _id: Math.random().toString(36).toString(7),
-    //   text: inputMessage,
-    //   createdAt: new Date().getTime(),
-    //   user: {
-    //     _id: userId,
-    //   },
-    // };
-    // setMessages((previousMessage) =>
-    //   GiftedChat.append(previousMessage, [message])
-    // );
-    // setInputMessage("");
+  const submitHandler = (text: string) => {
+    if (!text.trim()) {
+      return;
+    }
+    setResetChatInput((prev) => prev + 1);
+    const toId = chatProfile.isGroupChat ? toGroupId : toUserId;
+    insertChatLog.mutate({
+      to_id: toId,
+      is_group_chat: chatProfile.isGroupChat,
+      content: text.trim(),
+      content_type_code: ChatLogContentTypeCode.TEXT,
+      created_date: new Date(),
+    });
   };
 
   return (
@@ -259,7 +351,7 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
       </View>
 
       <GiftedChat
-        messages={iMessages}
+        messages={messages}
         renderInputToolbar={() => {
           return null;
         }}
@@ -268,22 +360,7 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
         renderMessage={(props) => renderMessage(props)}
       ></GiftedChat>
 
-      <View style={styles.inputContainer}>
-        <View style={styles.inputMessageContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Nhập tin nhắn"
-            placeholderTextColor="black"
-            value={inputMessage}
-            onChangeText={handleInputText}
-          />
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <TouchableOpacity onPress={submitHandler} style={styles.sendButton}>
-              <FontAwesome name="send" size={22} color={"gray"} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <ChatInput reset={resetChatInput} onSubmit={submitHandler} />
     </SafeAreaView>
   );
 };
