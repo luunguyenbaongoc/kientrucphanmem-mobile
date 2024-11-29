@@ -16,67 +16,69 @@ import { useMutation, useQuery } from "react-query";
 
 const RenderItem = ({ item, onRemoveUser }: any) => {
   const { userId } = useAuth();
+
+  const handleOnPress = () => {
+    if (userId === item?.user?.id) {
+      return;
+    }
+    router.push({
+      pathname: "/(chatbox)",
+      params: {
+        chatboxId: "",
+        avatar: item?.user?.profile[0]?.avatar,
+        name: item?.user?.profile[0]?.fullname,
+        toGroupId: "",
+        toUserId: item?.user?.id,
+      },
+    });
+  };
+
   return (
-    <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={() => {
-          if (userId === item?.user?.id) {
-            return;
-          }
-          router.push({
-            pathname: "/(chatbox)",
-            params: {
-              chatboxId: "",
-              avatar: item?.user?.profile[0]?.avatar,
-              name: item?.user?.profile[0]?.fullname,
-              toGroupId: "",
-              toUserId: item?.user?.id,
-            },
-          });
-        }}
-      >
-        <Image
-          source={{
-            uri: item.user.profile[0].avatar
-              ? `data:image/png;base64, ${item.user.profile[0].avatar}`
-              : item.user.profile[0].avatar,
-          }}
-          style={styles.avatar}
-        />
-        <Text style={styles.itemText}>{item.user.profile[0].fullname}</Text>
-      </TouchableOpacity>
-      {userId !== item?.user?.id && (
-        <View style={styles.iconContainer}>
-          <TouchableOpacity onPress={() => null}>
-            <IconButton
-              icon="phone"
-              size={20}
-              iconColor="blue"
-              onPress={() => {}}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => null}>
-            <IconButton
-              icon="video"
-              size={20}
-              iconColor="blue"
-              onPress={() => {}}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => null}>
-            <IconButton
-              icon="delete"
-              size={20}
-              iconColor="red"
-              onPress={() => {
-                onRemoveUser(item.user_id);
-              }}
-            />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+    <TouchableOpacity onPress={handleOnPress}>
+      <View style={styles.itemContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={handleOnPress}>
+          <Image
+            source={{
+              uri: item.user.profile[0].avatar
+                ? `data:image/png;base64, ${item.user.profile[0].avatar}`
+                : item.user.profile[0].avatar,
+            }}
+            style={styles.avatar}
+          />
+          <Text style={styles.itemText}>{item.user.profile[0].fullname}</Text>
+        </TouchableOpacity>
+        {userId !== item?.user?.id && (
+          <View style={styles.iconContainer}>
+            <TouchableOpacity onPress={() => null}>
+              <IconButton
+                icon="phone"
+                size={20}
+                iconColor="blue"
+                onPress={() => {}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => null}>
+              <IconButton
+                icon="video"
+                size={20}
+                iconColor="blue"
+                onPress={() => {}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => null}>
+              <IconButton
+                icon="delete"
+                size={20}
+                iconColor="red"
+                onPress={() => {
+                  onRemoveUser(item.user_id);
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 };
 

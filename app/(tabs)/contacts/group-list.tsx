@@ -13,52 +13,52 @@ import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
 import { useQuery } from "react-query";
 
 const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => {
+  const handleOnPress = () => {
+    router.push({
+      pathname: "/(chatbox)/group-chatbox",
+      params: {
+        chatboxId: "",
+        avatar: item?.group.avatar,
+        name,
+        toGroupId: item?.group.id,
+        toUserId: "",
+      },
+    });
+  };
   return (
-    <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={() => {
-          router.push({
-            pathname: "/(chatbox)/group-chatbox",
-            params: {
-              chatboxId: '',
-              avatar: item?.group.avatar,
-              name,
-              toGroupId: item?.group.id,
-              toUserId: "",
-            },
-          });
-        }}
-      >
-        <Image
-          source={{
-            uri: item?.group.avatar
-              ? `data:image/png;base64, ${item?.group.avatar}`
-              : undefined,
-          }}
-          style={styles.avatar}
-        />
-        <Text style={styles.itemText}>{name}</Text>
-      </TouchableOpacity>
-      <View style={styles.iconContainer}>
-        <TouchableOpacity onPress={() => onCallPress("audio")}>
-          <IconButton
-            icon="phone"
-            size={20}
-            iconColor="blue"
-            onPress={() => {}}
+    <TouchableOpacity onPress={handleOnPress}>
+      <View style={styles.itemContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={handleOnPress}>
+          <Image
+            source={{
+              uri: item?.group.avatar
+                ? `data:image/png;base64, ${item?.group.avatar}`
+                : undefined,
+            }}
+            style={styles.avatar}
           />
+          <Text style={styles.itemText}>{name}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onCallPress("video")}>
-          <IconButton
-            icon="video"
-            size={20}
-            iconColor="blue"
-            onPress={() => {}}
-          />
-        </TouchableOpacity>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity onPress={() => onCallPress("audio")}>
+            <IconButton
+              icon="phone"
+              size={20}
+              iconColor="blue"
+              onPress={() => {}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onCallPress("video")}>
+            <IconButton
+              icon="video"
+              size={20}
+              iconColor="blue"
+              onPress={() => {}}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
