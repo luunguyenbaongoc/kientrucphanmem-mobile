@@ -6,16 +6,23 @@ import { IconButton } from "react-native-paper";
 import { ChatBox } from "@/types/entities";
 
 const UserChatBoxScreen = ({}) => {
-  const { chatboxId, avatar, name } = useLocalSearchParams<{
-    chatboxId: string;
-    avatar: string;
-    name: string;
-  }>();
+  const { chatboxId, avatar, name, toGroupId, toUserId } =
+    useLocalSearchParams<{
+      chatboxId: string;
+      avatar: string;
+      name: string;
+      toUserId: string;
+      toGroupId: string;
+    }>();
 
   return (
     <ChatBoxComponent
       name={name}
       chatboxId={chatboxId}
+      toUserId={toUserId}
+      toGroupId={toGroupId}
+      avatar={avatar}
+      isGroupChat={false}
     />
   );
 };

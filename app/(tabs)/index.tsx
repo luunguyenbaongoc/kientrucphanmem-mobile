@@ -17,7 +17,7 @@ import { chatAPI } from "@/api/chat.api";
 import { ChatBox } from "@/types/entities";
 import { wp } from "@/helpers";
 import moment from "moment";
-import "moment/locale/vi"; // without this line it didn't work
+import "moment/locale/vi";
 import { useToast } from "react-native-paper-toast";
 moment.locale("vi");
 
@@ -99,34 +99,6 @@ const FriendListSreen = () => {
     queryFn: () => chatAPI.listChatBox(),
     enabled: true,
     select: (rs) => {
-      if (rs.data.count > 0 && !toUserId && !toGroupId) {
-        const firstChatBox = rs.data.data[0];
-        setChatboxId(firstChatBox.id);
-        if (firstChatBox.to_group_profile) {
-          const { avatar, name, id, group_members } =
-            firstChatBox.to_group_profile;
-          setToGroupId(id);
-          setChatProfile({
-            id,
-            isGroupChat: true,
-            name,
-            avatar,
-            memberCount: group_members.length,
-            newMessage: firstChatBox.new_message,
-          });
-        } else {
-          const uid = firstChatBox.to_user_profile.id;
-          const { avatar, fullname } = firstChatBox.to_user_profile.profile[0];
-          setToUserId(uid);
-          setChatProfile({
-            id: uid,
-            isGroupChat: false,
-            name: fullname,
-            avatar,
-            newMessage: firstChatBox.new_message,
-          });
-        }
-      }
       return rs.data;
     },
   });
@@ -157,33 +129,26 @@ const FriendListSreen = () => {
       setSeen.mutate(id);
     }
     if (chatbox.to_group_profile) {
-      setToUserId("");
-      setToGroupId(chatbox.to_group_profile.id);
-      setChatboxId(id);
-      setChatProfile({
-        id: chatbox.to_group_profile.id,
-        name,
-        isGroupChat: true,
-        avatar,
-        memberCount: chatbox.to_group_profile.group_members.length,
-      });
       router.push({
         pathname: "/(chatbox)/group-chatbox",
-        params: { groupName: name, groupId: chatbox.to_group_profile.id },
+        params: {
+          chatboxId: id,
+          avatar,
+          name,
+          toGroupId: chatbox.to_group_profile.id,
+          toUserId: "",
+        },
       });
     } else {
-      setToUserId(chatbox.to_user_profile.id);
-      setToGroupId("");
-      setChatboxId(id);
-      setChatProfile({
-        id: chatbox.to_user_profile.id,
-        name,
-        isGroupChat: false,
-        avatar,
-      });
       router.push({
         pathname: "/(chatbox)",
-        params: { chatboxId: id, avatar, name },
+        params: {
+          chatboxId: id,
+          avatar,
+          name,
+          toGroupId: "",
+          toUserId: chatbox.to_user_profile.id,
+        },
       });
     }
   };

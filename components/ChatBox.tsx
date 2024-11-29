@@ -75,15 +75,26 @@ const ChatInput: FC<ChatInputProps> = (props) => {
 
 interface ChatBoxProps {
   name?: string;
-  chatboxId?: string;
+  toUserId?: string;
+  toGroupId?: string;
+  chatboxId: string;
+  avatar?: string;
+  isGroupChat?: boolean;
   onSetting?: () => void;
 }
 
-const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
+const ChatBoxComponent = ({
+  name,
+  toUserId,
+  toGroupId,
+  chatboxId,
+  avatar,
+  isGroupChat,
+  onSetting,
+}: ChatBoxProps) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [resetChatInput, setResetChatInput] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const { chatProfile, chatboxId, toUserId, toGroupId } = useChat();
   const { userId } = useAuth();
   const toaster = useToast();
   const queryClient = useQueryClient();
@@ -293,10 +304,10 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
       return;
     }
     setResetChatInput((prev) => prev + 1);
-    const toId = chatProfile.isGroupChat ? toGroupId : toUserId;
+    const toId = isGroupChat ? toGroupId : toUserId;
     insertChatLog.mutate({
       to_id: toId,
-      is_group_chat: chatProfile.isGroupChat,
+      is_group_chat: isGroupChat,
       content: text.trim(),
       content_type_code: ChatLogContentTypeCode.TEXT,
       created_date: new Date(),
@@ -328,7 +339,7 @@ const ChatBoxComponent = ({ name, onSetting }: ChatBoxProps) => {
           <View>
             <Image
               source={{
-                uri: `data:image/png;base64, ${chatProfile.avatar}`,
+                uri: `data:image/png;base64, ${avatar}`,
               }}
               style={styles.avatar}
             />

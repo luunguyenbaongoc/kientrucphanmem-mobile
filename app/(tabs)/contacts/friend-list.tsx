@@ -20,14 +20,21 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
         onPress={() => {
           router.push({
             pathname: "/(chatbox)",
-            params: { userId, name },
+            params: {
+              chatboxId: "",
+              avatar: item?.to_user_profile?.profile[0]?.avatar,
+              name,
+              toGroupId: "",
+              toUserId: item?.to_user_profile?.id,
+            },
           });
         }}
       >
         <Image
           source={{
-            uri: item?.to_user_profile?.profile[0]?.avatar 
-              ? `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`: undefined
+            uri: item?.to_user_profile?.profile[0]?.avatar
+              ? `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`
+              : undefined,
           }}
           style={styles.avatar}
         />
@@ -120,7 +127,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     marginRight: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   itemContainer: {
     flexDirection: "row",
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
-  }
+  },
 });
 
 export default FriendListScreen;

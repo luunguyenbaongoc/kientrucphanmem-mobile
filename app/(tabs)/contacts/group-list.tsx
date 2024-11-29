@@ -20,7 +20,13 @@ const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => {
         onPress={() => {
           router.push({
             pathname: "/(chatbox)/group-chatbox",
-            params: { groupName: name, groupId },
+            params: {
+              chatboxId: '',
+              avatar: item?.group.avatar,
+              name,
+              toGroupId: item?.group.id,
+              toUserId: "",
+            },
           });
         }}
       >
