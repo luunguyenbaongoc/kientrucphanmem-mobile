@@ -38,7 +38,7 @@ export default function LoginScreen() {
       }
     },
     onError: (error: any) => {
-      setError(error.response.data.message);
+      setError(error);
       // enqueueSnackbar(error.response.data.message, {
       //   variant: "error",
       // });

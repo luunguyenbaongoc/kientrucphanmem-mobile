@@ -19,6 +19,7 @@ import {
 import { Button } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
 import { useMutation, useQuery } from "react-query";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const SettingsScreen = () => {
   const toaster = useToast();
@@ -30,23 +31,32 @@ const SettingsScreen = () => {
   });
 
   const pickImage = async () => {
+    // await ImagePicker.requestCameraPermissionsAsync();
+    // let result = await ImagePicker.launchCameraAsync({
+    //   cameraType: ImagePicker.CameraType.front,
+    //   allowsEditing: true,
+    //   aspect: [1, 1],
+    //   quality: 0.5,
+    // }); //launch camera
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+      aspect: [1, 1],
+      quality: 0,
     });
-
     if (!result.canceled) {
-      const { uri } = result.assets[0] as {
-        fileName: string;
-        uri: string;
-      };
-      updateProfile.mutate({
-        profileId: profileInfo.id,
-        fullname: profileInfo.fullname,
-        avatar: uri.replace('data:image/png;base64,', '')
-      });
+      const { uri, width, height } = result.assets[0];
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: width * 0.5, height: height * 0.5 } }],
+        {
+          compress: 0.5,
+          format: ImageManipulator.SaveFormat.JPEG,
+          base64: true,
+        }
+      );
+      setProfileInfo((prev) => ({ ...prev, avatar: manipResult.base64 }));
     }
   };
 
@@ -54,7 +64,7 @@ const SettingsScreen = () => {
     updateProfile.mutate({
       profileId: profileInfo.id,
       fullname: profileInfo.fullname,
-      avatar: profileInfo.avatar
+      avatar: profileInfo.avatar,
     });
   };
 
@@ -73,14 +83,14 @@ const SettingsScreen = () => {
       const profile: ProfileResponse = response.data;
       setProfileInfo({ ...profileInfo, ...profile });
       toaster.show({
-        message: 'Lưu hồ sơ thành công',
+        message: "Lưu hồ sơ thành công",
         duration: 2000,
         type: "success",
       });
     },
     onError: (error: any) => {
       toaster.show({
-        message: 'Lưu hồ sơ không thành công thành công',
+        message: "Lưu hồ sơ không thành công thành công",
         duration: 2000,
         type: "error",
       });
@@ -93,8 +103,8 @@ const SettingsScreen = () => {
       const succsess: boolean = response.data;
       if (succsess) {
         await AsyncStorage.clear();
-        setAccessToken('');
-        setUserId('');
+        setAccessToken("");
+        setUserId("");
         router.navigate("../(auth)");
       }
     },
@@ -109,7 +119,7 @@ const SettingsScreen = () => {
       STORAGE_KEY.REFRESH_TOKEN
     );
     if (userId && refresh_token) {
-      logout.mutate({ userId, refresh_token } as unknown as LogOutDto);
+      logout.mutate({ userId, refresh_token });
     }
   };
 

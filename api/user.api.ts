@@ -12,6 +12,6 @@ export const userAPI = {
     return http.get<ProfileResponse[]>(USER_URL.USER_PROFILE);
   },
   updateProfile(updateProfileDto: UpdateProfileDto) {
-    return http.patch<ProfileResponse>(USER_URL.PROFILE, updateProfileDto);
+    return http.put<ProfileResponse>(USER_URL.PROFILE, updateProfileDto);
   }
 };
