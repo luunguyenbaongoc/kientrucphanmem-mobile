@@ -12,34 +12,13 @@ import { ActivityIndicator, Searchbar, Badge } from "react-native-paper";
 import { router } from "expo-router";
 import { MESSAGE_MENU_ITEMS } from "@/utils/constants/message-menu-items";
 import { useChat } from "@/contexts/ChatContext";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { chatAPI } from "@/api/chat.api";
 import { ChatBox } from "@/types/entities";
 import { wp } from "@/helpers";
 import moment from "moment";
 import "moment/locale/vi"; // without this line it didn't work
 moment.locale("vi");
-
-const data = [
-  {
-    id: "1",
-    name: "John Doe",
-    avatar:
-      "https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    avatar:
-      "https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg",
-  },
-  {
-    id: "3",
-    name: "Alice Johnson",
-    avatar:
-      "https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg?size=626&ext=jpg",
-  },
-];
 
 interface ListItemProps {
   avatar?: string;
@@ -111,8 +90,9 @@ const FriendListSreen = () => {
     setToGroupId,
     setChatProfile,
   } = useChat();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["GetChatBoxListByUser"],
     queryFn: () => chatAPI.listChatBox(),
     enabled: true,
@@ -149,12 +129,27 @@ const FriendListSreen = () => {
     },
   });
 
+  const setSeen = useMutation(chatAPI.setChatboxSeen, {
+    onSuccess: (res) => {
+      if (res.data) {
+        // queryClient.invalidateQueries(["GetChatBoxListByUser"]);
+        refetch();
+      }
+    },
+    onError: (err: any) => {
+      // enqueueSnackbar(err, { variant: "error" });
+    },
+  });
+
   const handleSearchMessage = (text: string) => {
     setSearchQuery(text);
   };
 
   const handleItemPress = (chatbox: ChatBox, avatar: string, name: string) => {
     const { id } = chatbox;
+    if (chatbox.new_message) {
+      setSeen.mutate(id);
+    }
     if (chatbox.to_group_profile) {
       setToUserId("");
       setToGroupId(chatbox.to_group_profile.id);
