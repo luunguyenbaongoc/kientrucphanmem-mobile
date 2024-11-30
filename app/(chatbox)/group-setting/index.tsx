@@ -80,6 +80,7 @@ const GroupSettingScreen = () => {
       toUserId: string;
       toGroupId: string;
     }>();
+  const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = React.useState(false);
   const [groupName, setGroupName] = React.useState(name);
   const [groupAvatar, setGroupAvatar] = React.useState(avatar);
@@ -104,19 +105,16 @@ const GroupSettingScreen = () => {
       const { uri, width, height } = result.assets[0];
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
-        [{ resize: { width: width * 0.5, height: height * 0.5 } }],
+        [{ resize: { width: width * 0.2, height: height * 0.2 } }],
         {
-          compress: 0.5,
+          compress: 0.2,
           format: ImageManipulator.SaveFormat.JPEG,
           base64: true,
         }
       );
       updateGroup.mutate({ 
-        id: toGroupId, 
-        name: groupName, 
-        avatar: manipResult.base64,  
-        group_status_code: "active",
-        description: ""
+        id: toGroupId,
+        avatar: manipResult.base64
       });
     }
   };
@@ -131,6 +129,7 @@ const GroupSettingScreen = () => {
         });
         setGroupName(response.data.name)
         setGroupAvatar(response.data.avatar);
+        queryClient.invalidateQueries(["getGroupsByUser"]);
       }
     },
     onError: (error: any) => {
@@ -200,10 +199,7 @@ const GroupSettingScreen = () => {
                   console.log(groupName, toGroupId)
                   updateGroup.mutate({ 
                     id: toGroupId, 
-                    name: groupName1, 
-                    avatar: avatar,  
-                    group_status_code: "active",
-                    description: ""
+                    name: groupName1
                   });
                 }
               }}>

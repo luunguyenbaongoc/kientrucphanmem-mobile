@@ -8,7 +8,7 @@ export const GROUP_SETTING_ITEMS = [
     },
     {
         id: 'add-members',
-        icon: 'camera',
+        icon: 'account',
         route: 'group-setting/add-members',
         text: 'Thêm thành viên',
         textColor: 'black'
