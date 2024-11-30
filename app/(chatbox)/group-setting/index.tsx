@@ -129,7 +129,7 @@ const GroupSettingScreen = () => {
           duration: 1000,
           type: "success",
         });
-        setGroupName1(response.data.name)
+        setGroupName(response.data.name)
         setGroupAvatar(response.data.avatar);
       }
     },

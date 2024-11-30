@@ -25,10 +25,22 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
       },
     });
   };
+
+  const handleGoToBio = () => {
+    router.push({
+      pathname: "/(user)",
+      params: {
+        avatar: item?.to_user_profile?.profile[0]?.avatar,
+        name,
+        toUserId: item?.to_user_profile?.id,
+      },
+    });
+  }
+
   return (
     <TouchableOpacity onPress={handleOnPress}>
       <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={handleOnPress} style={styles.iconContainer}>
+        <TouchableOpacity onPress={handleGoToBio} style={styles.iconContainer}>
           <Image
             source={{
               uri: item?.to_user_profile?.profile[0]?.avatar
