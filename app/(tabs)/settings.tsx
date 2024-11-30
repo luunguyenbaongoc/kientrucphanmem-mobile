@@ -108,7 +108,6 @@ const SettingsScreen = () => {
       const succsess: boolean = response.data;
       if (succsess) {
         if (token) {
-          console.log("logout", token);
           removeFirebaseToken.mutate({ token, userId });
         }
         await AsyncStorage.clear();

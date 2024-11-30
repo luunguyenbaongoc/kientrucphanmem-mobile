@@ -40,7 +40,7 @@ export default function LoginScreen() {
         setAccessToken(access_token);
 
         if (token) {
-          console.log(token);
+          // console.log(token);
           addFirebaseToken.mutate({ token });
         }
 
