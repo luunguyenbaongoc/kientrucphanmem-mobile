@@ -22,7 +22,13 @@ const GroupChatBoxScreen = () => {
       onSetting={() => {
         router.push({
           pathname: "/group-setting",
-          params: { groupName: name, groupId: toGroupId },
+          params: { 
+            chatboxId, 
+            avatar, 
+            name, 
+            toGroupId, 
+            toUserId
+          },
         });
       }}
     />

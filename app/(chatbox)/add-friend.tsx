@@ -50,7 +50,11 @@ const AddFriendScreen = () => {
         <IconButton
           icon="account-plus"
           size={24}
-          onPress={() => sendFriendRequest.mutate({ to_user_phone: phone })}
+          onPress={() => {
+            if (phone.length > 0) {
+              sendFriendRequest.mutate({ to_user_phone: phone })
+            }
+          }}
           style={styles.searchButton}
         />
       </View>
@@ -104,12 +108,12 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
-    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 8,
-    backgroundColor: "#f1f1f1",
-    marginRight: 10,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff",
   },
   searchButton: {
     backgroundColor: "#608BC1",

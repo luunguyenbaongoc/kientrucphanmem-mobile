@@ -13,7 +13,7 @@ import { IconButton } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
 import { useMutation, useQueryClient } from "react-query";
 
-const RenderItem = ({ groupId, groupName, item }: ItemInfo) => {
+const RenderItem = ({ chatboxId, avatar, name, toGroupId, toUserId, item }: ItemInfo) => {
   const toaster = useToast();
   const queryClient = useQueryClient();
   const leaveGroup = useMutation(groupMemberAPI.leaveGroup, {
@@ -46,11 +46,11 @@ const RenderItem = ({ groupId, groupName, item }: ItemInfo) => {
         onPress={() => {
           const action = GROUP_SETTING_ITEM_API_MAP.get(item.id);
           if (action) {
-            action.mutate(groupId);
+            action.mutate(toGroupId);
           }
           router.push({
             pathname: item.route,
-            params: { groupName, groupId },
+            params: { chatboxId, avatar, name, toGroupId, toUserId },
           });
         }}>
         <IconButton
@@ -65,7 +65,15 @@ const RenderItem = ({ groupId, groupName, item }: ItemInfo) => {
 };
 
 const GroupSettingScreen = () => {
-  const { groupName, groupId } = useLocalSearchParams() as { groupName: string, groupId: string };
+  const { chatboxId, avatar, name, toGroupId, toUserId } =
+    useLocalSearchParams<{
+      chatboxId: string;
+      avatar: string;
+      name: string;
+      toUserId: string;
+      toGroupId: string;
+    }>();
+  console.log('???????', name, toGroupId, toUserId)
   return (
     <View 
       style={styles.container}>
@@ -73,8 +81,11 @@ const GroupSettingScreen = () => {
           data={GROUP_SETTING_ITEMS}
           renderItem={({ item }: { item: any }) => (
             <RenderItem
-              groupId={groupId}
-              groupName={groupName}
+              toGroupId={toGroupId}
+              name={name}
+              avatar={avatar}
+              chatboxId={chatboxId}
+              toUserId={toUserId}
               item={item}
             />
           )}
@@ -83,8 +94,11 @@ const GroupSettingScreen = () => {
 }
 
 interface ItemInfo {
-  groupId: string;
-  groupName: string;
+  chatboxId: string;
+  avatar: string;
+  name: string;
+  toGroupId: string;
+  toUserId: string;
   item: {
     id: any,
     icon?: any;

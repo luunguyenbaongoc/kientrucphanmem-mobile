@@ -95,6 +95,7 @@ const ChatBoxComponent = ({
   const [messages, setMessages] = useState<any[]>([]);
   const [resetChatInput, setResetChatInput] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  let genMessages = null;
   const { userId } = useAuth();
   const toaster = useToast();
   const queryClient = useQueryClient();
@@ -147,7 +148,7 @@ const ChatBoxComponent = ({
     refetch();
   }, []);
 
-  const genMessages = (data) => {
+  genMessages = (data) => {
     if (data) {
       const iMessages: IMessage[] = [];
       for (let i = data.length - 1; i >= 0; i--) {
