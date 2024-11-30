@@ -96,7 +96,6 @@ const CreateGroupScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Tạo nhóm</Text>
       <TouchableOpacity onPress={pickImage}>
-      <Text style={styles.centeredText}>Hình đại diện</Text>
         <Image
           source={
             groupImageInfo.uri.length > 0
@@ -111,12 +110,14 @@ const CreateGroupScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Tên nhóm"
+        placeholderTextColor="#aaa"
         value={name}
         onChangeText={setName}
       />
       <TextInput
         style={styles.input}
         placeholder="Mô tả"
+        placeholderTextColor="#aaa"
         value={description}
         onChangeText={setDescription}
         multiline
@@ -147,11 +148,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff",
   },
   privacyContainer: {
     flexDirection: 'row',
@@ -161,10 +163,6 @@ const styles = StyleSheet.create({
   },
   privacyText: {
     fontSize: 16,
-  },
-  centeredText: {
-    fontSize: 16,
-    textAlign: 'center',
   },
   avatar: {
     width: 64,
