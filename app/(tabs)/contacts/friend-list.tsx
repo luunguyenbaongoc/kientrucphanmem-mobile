@@ -40,17 +40,19 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
   return (
     <TouchableOpacity onPress={handleOnPress}>
       <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={handleGoToBio} style={styles.iconContainer}>
-          <Image
-            source={{
-              uri: item?.to_user_profile?.profile[0]?.avatar
-                ? `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`
-                : undefined,
-            }}
-            style={styles.avatar}
-          />
+        <View style={styles.iconContainer}>
+          <TouchableOpacity onPress={handleGoToBio}>
+            <Image
+              source={{
+                uri: item?.to_user_profile?.profile[0]?.avatar
+                  ? `data:image/png;base64, ${item?.to_user_profile?.profile[0]?.avatar}`
+                  : undefined,
+              }}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
           <Text style={styles.itemText}>{name}</Text>
-        </TouchableOpacity>
+        </View>
         <View style={styles.iconContainer}>
           <TouchableOpacity onPress={() => onCallPress("audio")}>
             <IconButton

@@ -1,29 +1,33 @@
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 
 const UserBioScreen = () => {
   const screenHeight = Dimensions.get("window").height;
-  const backgroundHeight = (2 / 3) * screenHeight;
+  const backgroundHeight = (1 / 3) * screenHeight;
+
+  const { avatar, name, toUserId } =
+    useLocalSearchParams<{
+    avatar: string;
+    name: string;
+    toUserId: string;
+  }>();
 
   return (
     <View style={styles.container}>
-      {/* Background Image */}
       <Image
-        source={{ uri: "https://example.com/background-image.jpg" }} // Replace with your background image URL
+        source={require("@/assets/images/unauth-cover.jpg")}
         style={[styles.backgroundImage, { height: backgroundHeight }]}
         resizeMode="cover"
       />
-
-      {/* Profile Info */}
       <View style={styles.profileContainer}>
-        {/* Avatar */}
         <Image
-          source={{ uri: "https://example.com/user-avatar.jpg" }} // Replace with your avatar image URL
+          source={{
+            uri: `data:image/png;base64, ${avatar}`,
+          }}
           style={styles.avatar}
         />
-
-        {/* User Name */}
-        <Text style={styles.username}>John Doe</Text>
+        <Text style={styles.username}>{name}</Text>
       </View>
     </View>
   );
@@ -42,7 +46,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: "auto", // Moves the profile container into the visible area
+    marginTop: "auto",
   },
   avatar: {
     width: 100,
@@ -50,13 +54,12 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 4,
     borderColor: "white",
-    marginTop: -50, // Moves the avatar partially over the background
+    marginTop: -50,
   },
   username: {
     marginTop: 16,
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
   },
 });
 
