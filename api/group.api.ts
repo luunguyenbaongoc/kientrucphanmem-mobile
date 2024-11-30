@@ -1,5 +1,5 @@
 import { CreateGroupDto } from "@/types/api/dto";
-import { FindByUserDto, UploadGroupImageDto } from "@/types/api/dto/group";
+import { FindByUserDto, UpdateGroupDto, UploadGroupImageDto } from "@/types/api/dto/group";
 import { GroupMemberResponse } from "@/types/api/response/group.member.response";
 import { GroupResponse } from "../types/api/response";
 import http from "../utils/http";
@@ -17,6 +17,10 @@ export const groupAPI = {
 
   getGroups(findByUserDto: FindByUserDto) {
     return http.post<GroupMemberResponse>(GROUP_URL.GROUP_LIST, findByUserDto);
+  },
+
+  updateGroup(updateGroupDto: UpdateGroupDto) {
+    return http.put<GroupResponse>(GROUP_URL.GROUP, updateGroupDto);
   },
 
   uploadAvatar(uploadImageDto: UploadGroupImageDto) {
