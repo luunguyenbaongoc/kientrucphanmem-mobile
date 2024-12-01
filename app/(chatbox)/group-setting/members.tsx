@@ -98,7 +98,7 @@ const MembersScreen = () => {
     queryFn: () => groupMemberAPI.getGroupMembers(toGroupId),
     enabled: true,
     select: (rs) => {
-      console.log(rs.data)
+      // console.log(rs.data)
       return rs.data.users;
     },
   });

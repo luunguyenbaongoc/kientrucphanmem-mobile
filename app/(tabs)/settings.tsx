@@ -77,7 +77,7 @@ const SettingsScreen = () => {
       setProfileInfo({ ...profileInfo, ...profiles[0] });
     },
     onError: (error: any) => {
-      console.log(error);
+      toaster.show({ message: error.message, type: "error" });
     },
   });
 
@@ -97,7 +97,7 @@ const SettingsScreen = () => {
         duration: 2000,
         type: "error",
       });
-      console.log(error);
+      // console.log(error);
     },
   });
 

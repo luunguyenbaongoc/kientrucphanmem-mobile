@@ -66,7 +66,7 @@ const GroupListScreen = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
 
   const handleCallPress = (type: string) => {
-    console.log(`Making ${type} call`);
+    // console.log(`Making ${type} call`);
   };
 
   const { data, isLoading } = useQuery({

@@ -79,7 +79,7 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
 const FriendListScreen = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const handleCallPress = (type: string) => {
-    console.log(`Making ${type} call`);
+    // console.log(`Making ${type} call`);
   };
 
   const { isLoading, data, refetch } = useQuery({

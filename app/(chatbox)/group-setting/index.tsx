@@ -196,7 +196,7 @@ const GroupSettingScreen = () => {
               <TouchableOpacity style={styles.button} onPress={() => {
                 setIsEditing(false);
                 if (groupName.length > 0) {
-                  console.log(groupName, toGroupId)
+                  // console.log(groupName, toGroupId)
                   updateGroup.mutate({ 
                     id: toGroupId, 
                     name: groupName1
