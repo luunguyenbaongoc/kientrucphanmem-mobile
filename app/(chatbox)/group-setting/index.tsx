@@ -31,6 +31,7 @@ const RenderItem = ({ chatboxId, avatar, name, toGroupId, toUserId, item }: Item
           type: "success",
         });
         queryClient.invalidateQueries(['getGroupsByUser']);
+        queryClient.invalidateQueries(['GetChatBoxListByUser']);
       }
     },
     onError: (error: any) => {
