@@ -30,6 +30,7 @@ import { useToast } from "react-native-paper-toast";
 import { ChatLogContentTypeCode } from "@/utils/enums";
 import { groupAPI } from "@/api/group.api";
 import { userAPI } from "@/api/user.api";
+import messaging from "@react-native-firebase/messaging";
 
 interface ChatInputProps {
   reset?: number;
@@ -127,8 +128,6 @@ const ChatBoxComponent = ({
       const { id, content, owner_id, created_date } = response.data;
 
       if (id) {
-        queryClient.invalidateQueries(["GetChatBoxListByUser"]);
-        // refetch();
         const iMessage: IMessage = {
           _id: id,
           text: content,
@@ -138,6 +137,7 @@ const ChatBoxComponent = ({
           },
         };
         setMessages((prev) => [iMessage, ...prev]);
+        queryClient.invalidateQueries(["GetChatBoxListByUser"]);
       }
     },
     onError: (error: any) => {
@@ -177,6 +177,13 @@ const ChatBoxComponent = ({
 
   useEffect(() => {
     refetch();
+    messaging().onMessage(async (remoteMessage) => {
+      console.log(
+        "A new FCM message arrived!",
+        JSON.stringify(remoteMessage)
+      );
+      refetch();
+    });
   }, []);
 
   useFocusEffect(

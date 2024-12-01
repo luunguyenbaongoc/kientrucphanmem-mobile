@@ -1,6 +1,6 @@
 import { friendAPI } from "@/api/friend.api";
-import { Link, router } from "expo-router";
-import React from "react";
+import { Link, router, useFocusEffect } from "expo-router";
+import React, { useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
   const handleOnPress = () => {
@@ -81,6 +81,7 @@ const FriendListScreen = () => {
   const handleCallPress = (type: string) => {
     // console.log(`Making ${type} call`);
   };
+  const queryClient = useQueryClient();
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: ["findFriendsByText", searchQuery],
@@ -95,6 +96,12 @@ const FriendListScreen = () => {
     setSearchQuery(text);
     refetch();
   };
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries("findFriendsByText");
+    }
+  }, [])
 
   return (
     <View>

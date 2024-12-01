@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { ActivityIndicator, Searchbar, Badge } from "react-native-paper";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { MESSAGE_MENU_ITEMS } from "@/utils/constants/message-menu-items";
 import { useChat } from "@/contexts/ChatContext";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -20,7 +20,7 @@ import moment from "moment";
 import "moment/locale/vi";
 import { useToast } from "react-native-paper-toast";
 moment.locale("vi");
-import messaging from '@react-native-firebase/messaging';
+import messaging from "@react-native-firebase/messaging";
 
 interface ListItemProps {
   avatar?: string;
@@ -95,10 +95,10 @@ const FriendListSreen = () => {
   const queryClient = useQueryClient();
   const toaster = useToast();
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["GetChatBoxListByUser"],
     queryFn: () => chatAPI.listChatBox(),
-    enabled: true,
+    enabled: false,
     select: (rs) => {
       return rs.data;
     },
@@ -155,11 +155,31 @@ const FriendListSreen = () => {
   };
 
   useEffect(() => {
-    return messaging().onMessage(async remoteMessage => {
-      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    // refetch();
+    messaging().onMessage(async (remoteMessage) => {
+      console.log("A new FCM message arrived!", JSON.stringify(remoteMessage));
       refetch();
     });
+    return () => {
+      queryClient.removeQueries("GetChatBoxListByUser");
+    };
   }, []);
+
+  // useEffect(() => {
+  //   return () => {
+  //     setProfile({
+  //       fullname: "",
+  //       avatar: "",
+  //       id: "",
+  //     });
+  //   };
+  // }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   return (
     <View>
@@ -177,7 +197,7 @@ const FriendListSreen = () => {
       ) : (
         <FlatList
           scrollEnabled={true}
-          data={data?.data}
+          data={data ? data.data : []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             let avatar: string, name: string;

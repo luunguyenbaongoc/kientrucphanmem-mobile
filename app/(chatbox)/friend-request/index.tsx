@@ -46,6 +46,7 @@ const RenderItem = ({ name, item }: ItemInfo) => {
           type: "success",
         });
         queryClient.invalidateQueries(["getFriendRequestsReceived"]);
+        queryClient.invalidateQueries(["findFriendsByText", ""]);
       }
     },
     onError: (error: any) => {

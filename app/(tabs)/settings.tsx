@@ -6,7 +6,7 @@ import { ProfileResponse } from "@/types/api/response/profile.response";
 import { STORAGE_KEY } from "@/utils/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import * as React from "react";
 import {
   Image,
@@ -21,6 +21,7 @@ import { useToast } from "react-native-paper-toast";
 import { useMutation, useQuery } from "react-query";
 import * as ImageManipulator from "expo-image-manipulator";
 import useNotification from "@/hooks/useNotification";
+import { useEffect, useCallback, useLayoutEffect } from "react";
 
 const SettingsScreen = () => {
   const toaster = useToast();
@@ -71,20 +72,58 @@ const SettingsScreen = () => {
     });
   };
 
-  useQuery(["getMyProfile", profileInfo.id], () => userAPI.getMyProfile(), {
-    onSuccess: async (response) => {
-      const profiles: ProfileResponse[] = response.data;
-      setProfileInfo({ ...profileInfo, ...profiles[0] });
+  // useQuery(["getMyProfile"], () => userAPI.getMyProfile(), {
+  //   onSuccess: (response) => {
+  //     const profiles: ProfileResponse[] = response.data;
+  //     console.log(profiles);
+  //     setProfileInfo({ ...profileInfo, ...profiles[0] });
+  //   },
+  //   onError: (error: any) => {
+  //     toaster.show({ message: error.message, type: "error" });
+  //   },
+  // });
+
+  const {
+    refetch: refetchGetUserInfo,
+    data: userInfo,
+    isLoading: loadingGetUserInfo,
+  } = useQuery({
+    queryKey: ["getMyProfile"],
+    queryFn: () => userAPI.getMyProfile(),
+    select: (rs) => {
+      if (rs.data && setProfile) {
+        const profile: ProfileResponse = rs.data[0];
+        setProfile(profile);
+      }
+      return rs.data[0];
     },
-    onError: (error: any) => {
-      toaster.show({ message: error.message, type: "error" });
-    },
+    enabled: false,
   });
 
+  useEffect(() => {
+    return () => {
+      setProfile({
+        fullname: "",
+        avatar: "",
+        id: "",
+      });
+    };
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchGetUserInfo();
+    }, [])
+  );
+
+  const setProfile = (profile: ProfileResponse) => {
+    setProfileInfo({ ...profileInfo, ...profile });
+  };
+
   const updateProfile = useMutation(userAPI.updateProfile, {
-    onSuccess: async (response) => {
-      const profile: ProfileResponse = response.data;
-      setProfileInfo({ ...profileInfo, ...profile });
+    onSuccess: (response) => {
+      // const profile: ProfileResponse = response.data;
+      // setProfileInfo({ ...profileInfo, ...profile });
       toaster.show({
         message: "Lưu hồ sơ thành công",
         duration: 2000,
@@ -121,6 +160,10 @@ const SettingsScreen = () => {
     },
   });
 
+  // useEffect(() => {
+  //   refetchGetUserInfo();
+  // }, []);
+
   const handleLogout = async () => {
     const userId: string | null = await AsyncStorage.getItem(STORAGE_KEY.ID);
     const refresh_token: string | null = await AsyncStorage.getItem(
@@ -135,30 +178,33 @@ const SettingsScreen = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Cài đặt</Text>
 
-      <TouchableOpacity onPress={pickImage}>
-        <Image
-          source={
-            profileInfo.avatar
-              ? {
-                  uri: `data:image/png;base64, ${profileInfo.avatar}`,
-                }
-              : require("@/assets/images/icon.png")
-          }
-          style={styles.profileImage}
-        />
-        <Text style={styles.changePhotoText}>Thay đổi ảnh đại diện</Text>
-      </TouchableOpacity>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Họ và tên</Text>
-        <TextInput
-          value={profileInfo.fullname}
-          onChangeText={(value: string) =>
-            setProfileInfo({ ...profileInfo, fullname: value })
-          }
-          style={styles.input}
-        />
-      </View>
+      {!loadingGetUserInfo && (
+        <>
+          <TouchableOpacity onPress={pickImage}>
+            <Image
+              source={
+                profileInfo.avatar
+                  ? {
+                      uri: `data:image/png;base64, ${profileInfo.avatar}`,
+                    }
+                  : require("@/assets/images/icon.png")
+              }
+              style={styles.profileImage}
+            />
+            <Text style={styles.changePhotoText}>Thay đổi ảnh đại diện</Text>
+          </TouchableOpacity>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Họ và tên</Text>
+            <TextInput
+              value={profileInfo.fullname}
+              onChangeText={(value: string) =>
+                setProfileInfo({ ...profileInfo, fullname: value })
+              }
+              style={styles.input}
+            />
+          </View>
+        </>
+      )}
 
       <Button
         style={{ backgroundColor: "#0190f3" }}

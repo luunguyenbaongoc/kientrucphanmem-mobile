@@ -1,3 +1,4 @@
+import { Platform } from "@/utils/enums";
 import { GetChatBoxDetailDto, InsertChatLogDto } from "../types/api/dto/chat";
 import { ListChatBoxByUserResult } from "../types/api/response/chatbox";
 import { ChatBoxChatLog, ChatLog } from "../types/entities";
@@ -21,7 +22,10 @@ export const chatAPI = {
     );
   },
   insertChatlog(insertChatlogDto: InsertChatLogDto) {
-    return http.post<ChatLog>(CHAT_URL.INSERT_CHAT_LOG, insertChatlogDto);
+    return http.post<ChatLog>(CHAT_URL.INSERT_CHAT_LOG, {
+      ...insertChatlogDto,
+      platform: Platform.MOBILE,
+    });
   },
   setChatboxSeen(chatboxId: string) {
     return http.get<boolean>(`${CHAT_URL.SET_CHATBOX_SEEN}/${chatboxId}`);

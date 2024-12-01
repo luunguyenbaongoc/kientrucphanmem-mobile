@@ -1,6 +1,6 @@
 import { groupAPI } from "@/api/group.api";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => {
   const handleOnPress = () => {
@@ -64,6 +64,7 @@ const RenderItem = ({ groupId, name, item, onCallPress }: ItemInfo) => {
 
 const GroupListScreen = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
+  const queryClient = useQueryClient();
 
   const handleCallPress = (type: string) => {
     // console.log(`Making ${type} call`);
@@ -80,6 +81,12 @@ const GroupListScreen = () => {
   const handleSearchFriend = (text: string) => {
     setSearchQuery(text);
   };
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries("getGroupsByUser");
+    }
+  }, [])
 
   return (
     <View style={styles.container}>
