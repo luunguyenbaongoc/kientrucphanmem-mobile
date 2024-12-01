@@ -1,7 +1,7 @@
 // import * as DocumentPicker from 'expo-document-picker';
 import { useChat } from "@/contexts/ChatContext";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, {
   FC,
   memo,
@@ -28,6 +28,8 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { chatAPI } from "@/api/chat.api";
 import { useToast } from "react-native-paper-toast";
 import { ChatLogContentTypeCode } from "@/utils/enums";
+import { groupAPI } from "@/api/group.api";
+import { userAPI } from "@/api/user.api";
 
 interface ChatInputProps {
   reset?: number;
@@ -79,7 +81,7 @@ interface ChatBoxProps {
   toGroupId?: string;
   chatboxId: string;
   avatar?: string;
-  isGroupChat?: boolean;
+  isGroupChat: boolean;
   onSetting?: () => void;
 }
 
@@ -95,10 +97,13 @@ const ChatBoxComponent = ({
   const [messages, setMessages] = useState<any[]>([]);
   const [resetChatInput, setResetChatInput] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  let genMessages = null;
   const { userId } = useAuth();
   const toaster = useToast();
   const queryClient = useQueryClient();
+  const [chatBoxProfile, setChatBoxProfile] = useState({
+    name: "",
+    avatar: "",
+  });
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: ["ChatDetail", toUserId, toGroupId, chatboxId],
@@ -144,11 +149,51 @@ const ChatBoxComponent = ({
     },
   });
 
+  const { refetch: refetchGroupInfo } = useQuery({
+    queryKey: ["GetGroupInfo"],
+    queryFn: () => groupAPI.get(toGroupId),
+    enabled: false,
+    select: (rs) => {
+      if (rs.data && setProfile) {
+        const { name, avatar } = rs.data;
+        setProfile({ name, avatar });
+      }
+      return rs.data;
+    },
+  });
+
+  const { refetch: refetchUserInfo } = useQuery({
+    queryKey: ["GetUserInfo"],
+    queryFn: () => userAPI.getUserProfile(toUserId),
+    enabled: false,
+    select: (rs) => {
+      if (rs.data && setProfile) {
+        const { fullname, avatar } = rs.data[0];
+        setProfile({ name: fullname, avatar });
+      }
+      return rs.data;
+    },
+  });
+
   useEffect(() => {
     refetch();
   }, []);
 
-  genMessages = (data) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isGroupChat) {
+        refetchGroupInfo();
+      } else {
+        refetchUserInfo();
+      }
+    }, [])
+  );
+
+  const setProfile = (groupProfile: { name: string; avatar: string }) => {
+    setChatBoxProfile({ ...groupProfile });
+  };
+
+  const genMessages = (data) => {
     if (data) {
       const iMessages: IMessage[] = [];
       for (let i = data.length - 1; i >= 0; i--) {
@@ -167,26 +212,6 @@ const ChatBoxComponent = ({
       return iMessages;
     }
   };
-
-  // let iMessages = useMemo(() => {
-  //   if (data) {
-  //     const iMessages: IMessage[] = [];
-  //     for (let i = data.length - 1; i >= 0; i--) {
-  //       const item = data[i];
-  //       const iMessage: IMessage = {
-  //         _id: item.id,
-  //         text: item.chat_log.content,
-  //         createdAt: item.chat_log.created_date,
-  //         user: {
-  //           _id: item.chat_log.owner_id,
-  //         },
-  //       };
-  //       iMessages.push(iMessage);
-  //     }
-  //     return iMessages;
-  //   }
-  // }, [data]);
-  // let iMessages = genMessages();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -340,13 +365,13 @@ const ChatBoxComponent = ({
           <View>
             <Image
               source={{
-                uri: `data:image/png;base64, ${avatar}`,
+                uri: `data:image/png;base64, ${chatBoxProfile.avatar}`,
               }}
               style={styles.avatar}
             />
           </View>
           <View style={{ marginLeft: 16 }}>
-            <Text style={styles.headerText}>{name}</Text>
+            <Text style={styles.headerText}>{chatBoxProfile.name}</Text>
           </View>
         </View>
 

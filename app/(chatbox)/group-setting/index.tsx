@@ -3,7 +3,7 @@ import { groupAPI } from "@/api/group.api";
 import { GROUP_SETTING_ITEMS } from "@/utils/constants/group-setting-routes";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { IconButton } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const RenderItem = ({ chatboxId, avatar, name, toGroupId, toUserId, item }: ItemInfo) => {
   const toaster = useToast();
@@ -82,9 +82,9 @@ const GroupSettingScreen = () => {
     }>();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = React.useState(false);
-  const [groupName, setGroupName] = React.useState(name);
-  const [groupAvatar, setGroupAvatar] = React.useState(avatar);
-  const [groupName1, setGroupName1] = React.useState(name);
+  const [groupName, setGroupName] = React.useState('');
+  const [groupAvatar, setGroupAvatar] = React.useState('');
+  const [groupName1, setGroupName1] = React.useState('');
 
   const pickImage = async () => {
     // await ImagePicker.requestCameraPermissionsAsync();
@@ -140,6 +140,31 @@ const GroupSettingScreen = () => {
       });
     },
   });
+
+  const { refetch: refetchGroupInfo } = useQuery({
+    queryKey: ["GetGroupInfo"],
+    queryFn: () => groupAPI.get(toGroupId),
+    enabled: false,
+    select: (rs) => {
+      if (rs.data && setProfile) {
+        const { name, avatar } = rs.data;
+        setProfile({ name, avatar });
+      }
+      return rs.data;
+    },
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchGroupInfo();
+    }, [])
+  );
+
+  const setProfile = (groupProfile: { name: string; avatar: string }) => {
+    setGroupName(groupProfile.name);
+    setGroupName1(groupProfile.name);
+    setGroupAvatar(groupProfile.avatar);
+  };
 
   return (
     <View>
