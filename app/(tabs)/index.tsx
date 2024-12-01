@@ -1,5 +1,5 @@
 import { SimpleMenu } from "@/components/Menu";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -20,6 +20,7 @@ import moment from "moment";
 import "moment/locale/vi";
 import { useToast } from "react-native-paper-toast";
 moment.locale("vi");
+import messaging from '@react-native-firebase/messaging';
 
 interface ListItemProps {
   avatar?: string;
@@ -152,6 +153,13 @@ const FriendListSreen = () => {
       });
     }
   };
+
+  useEffect(() => {
+    return messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      refetch();
+    });
+  }, []);
 
   return (
     <View>

@@ -20,6 +20,7 @@ import { Button } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
 import { useMutation, useQuery } from "react-query";
 import * as ImageManipulator from "expo-image-manipulator";
+import useNotification from "@/hooks/useNotification";
 
 const SettingsScreen = () => {
   const toaster = useToast();
@@ -29,6 +30,8 @@ const SettingsScreen = () => {
     avatar: "",
     id: "",
   });
+  const token = useNotification();
+  const { userId } = useAuth();
 
   const pickImage = async () => {
     // await ImagePicker.requestCameraPermissionsAsync();
@@ -98,10 +101,15 @@ const SettingsScreen = () => {
     },
   });
 
-  const logout = useMutation(authAPI.logout, {
+  const removeFirebaseToken = useMutation(userAPI.removeFirebaseToken);
+
+  const { isLoading, mutate: logout } = useMutation(authAPI.logout, {
     onSuccess: async (response) => {
       const succsess: boolean = response.data;
       if (succsess) {
+        if (token) {
+          removeFirebaseToken.mutate({ token, userId });
+        }
         await AsyncStorage.clear();
         setAccessToken("");
         setUserId("");
@@ -119,7 +127,7 @@ const SettingsScreen = () => {
       STORAGE_KEY.REFRESH_TOKEN
     );
     if (userId && refresh_token) {
-      logout.mutate({ userId, refresh_token });
+      logout({ userId, refresh_token });
     }
   };
 
@@ -163,6 +171,7 @@ const SettingsScreen = () => {
         style={{ backgroundColor: "#0190f3", marginTop: 10 }}
         mode="contained"
         onPress={handleLogout}
+        disabled={isLoading}
       >
         Đăng xuất
       </Button>

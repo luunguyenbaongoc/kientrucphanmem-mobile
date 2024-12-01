@@ -10,19 +10,24 @@ import { LogInDto } from "@/types/api/dto";
 import { STORAGE_KEY } from "@/utils/constants";
 import { useMutation } from "react-query";
 import { authAPI } from "@/api";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
+import useNotification from "@/hooks/useNotification";
+import { userAPI } from "@/api/user.api";
 
 export default function LoginScreen() {
   const [loginInfo, setLoginInfo] = useState({
     phone: "",
     password: "",
   } as LogInDto);
-  const [errorText, setErrorText] = useState('');
+  const [errorText, setErrorText] = useState("");
   const [errorVisible, setErrorVisible] = useState(false);
   const { setAccessToken, setUserId } = useAuth();
+  const token = useNotification();
 
-  const login = useMutation(authAPI.login, {
+  const addFirebaseToken = useMutation(userAPI.addFirebaseToken);
+
+  const {isLoading, mutate: login} = useMutation(authAPI.login, {
     onSuccess: async (response) => {
       const { access_token, refresh_token, user, is_success } = response.data;
 
@@ -34,11 +39,16 @@ export default function LoginScreen() {
         setUserId(user.id);
         setAccessToken(access_token);
 
+        if (token) {
+          // console.log(token);
+          addFirebaseToken.mutate({ token });
+        }
+
         router.navigate("../(tabs)");
       }
     },
     onError: (error: any) => {
-      setError(error);
+      setError(error.message);
       // enqueueSnackbar(error.response.data.message, {
       //   variant: "error",
       // });
@@ -47,12 +57,12 @@ export default function LoginScreen() {
 
   const setError = (errorMessage: string) => {
     setErrorText(errorMessage);
-    setErrorVisible(errorMessage !== '');
-  }
+    setErrorVisible(errorMessage !== "");
+  };
 
   const handleSubmit = (event: GestureResponderEvent) => {
     event.preventDefault();
-    login.mutate(loginInfo);
+    login(loginInfo);
   };
 
   const onFormChangeHandler = (key: string, value: string) => {
@@ -93,13 +103,12 @@ export default function LoginScreen() {
           value={loginInfo.password}
           onChangeText={(value) => onFormChangeHandler("password", value)}
         />
-        {
-          errorVisible && <ThemedText type='error'>{errorText}</ThemedText>
-        }
+        {errorVisible && <ThemedText type="error">{errorText}</ThemedText>}
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"
           onPress={handleSubmit}
+          disabled={isLoading}
         >
           Đăng nhập
         </Button>

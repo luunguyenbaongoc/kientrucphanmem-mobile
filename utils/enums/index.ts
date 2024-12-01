@@ -19,3 +19,8 @@ export enum ChatLogContentTypeCode {
   IMAGE = 'image',
   VIDEO = 'video',
 }
+
+export enum Platform {
+  MOBILE = 'mobile',
+  WEB = 'web',
+}
