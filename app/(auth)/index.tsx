@@ -13,7 +13,7 @@ export default function AuthRootScreen() {
         ></Image>
       </View>
       <View style={styles.content}>
-        <Text style={styles.content_title}>Zalỏ</Text>
+        <Text style={styles.content_title}>Zola</Text>
         <View style={styles.button_container}>
           <Button
             textColor="white"
