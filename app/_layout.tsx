@@ -51,6 +51,10 @@ export default function RootLayout() {
                     name="(chatbox)"
                     options={{ headerShown: false }}
                   />
+                  <Stack.Screen
+                    name="(user)"
+                    options={{ headerShown: false }}
+                  />
                   <Stack.Screen name="+not-found" />
                 </Stack>
               </ChatProvider>

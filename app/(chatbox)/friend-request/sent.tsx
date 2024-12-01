@@ -1,4 +1,5 @@
 import { friendAPI } from "@/api/friend.api";
+import { router } from "expo-router";
 import React from "react";
 import {
   ActivityIndicator,
@@ -41,18 +42,30 @@ const RenderItem = ({ name, item }: ItemInfo) => {
     declineRequest.mutate(item.id);
   };
 
+  const handleGoToBio = () => {
+    router.push({
+      pathname: "/(user)",
+      params: {
+        avatar: avatar,
+        name,
+        toUserId: item.id,
+      },
+    });
+  }
+
   return (
     <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.iconContainer}>
-        <Image
-          source={{
-            uri: `data:image/png;base64, ${avatar}`,
-          }}
-          style={styles.avatar}
-        />
+      <View style={styles.iconContainer}>
+        <TouchableOpacity onPress={handleGoToBio}>
+          <Image
+            source={{
+              uri: `data:image/png;base64, ${avatar}`,
+            }}
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
         <Text style={styles.itemText}>{name}</Text>
-      </TouchableOpacity>
+      </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity onPress={handleDeclineRequest}>
           <IconButton

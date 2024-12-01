@@ -84,13 +84,21 @@ const RenderItem = ({ item, onRemoveUser }: any) => {
 
 const MembersScreen = () => {
   const toaster = useToast();
-  const { groupId } = useLocalSearchParams() as { groupId: string };
+  const { chatboxId, avatar, name, toGroupId, toUserId } =
+    useLocalSearchParams<{
+      chatboxId: string;
+      avatar: string;
+      name: string;
+      toUserId: string;
+      toGroupId: string;
+    }>();
 
   const { isLoading, data, refetch } = useQuery({
-    queryKey: ["getGroupMembers", groupId],
-    queryFn: () => groupMemberAPI.getGroupMembers(groupId),
+    queryKey: ["getGroupMembers", toGroupId],
+    queryFn: () => groupMemberAPI.getGroupMembers(toGroupId),
     enabled: true,
     select: (rs) => {
+      console.log(rs.data)
       return rs.data.users;
     },
   });
@@ -131,7 +139,7 @@ const MembersScreen = () => {
               onRemoveUser={(userId: string) => {
                 removeGroupMember.mutate({
                   user_ids: [userId],
-                  group_id: groupId,
+                  group_id: toGroupId,
                 });
               }}
             />
