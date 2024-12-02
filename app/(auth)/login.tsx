@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
 import useNotification from "@/hooks/useNotification";
 import { userAPI } from "@/api/user.api";
+import { useToast } from "react-native-paper-toast";
 
 export default function LoginScreen() {
   const [loginInfo, setLoginInfo] = useState({
@@ -24,10 +25,11 @@ export default function LoginScreen() {
   const [errorVisible, setErrorVisible] = useState(false);
   const { setAccessToken, setUserId } = useAuth();
   const token = useNotification();
+  const toaster = useToast();
 
   const addFirebaseToken = useMutation(userAPI.addFirebaseToken);
 
-  const {isLoading, mutate: login} = useMutation(authAPI.login, {
+  const { isLoading, mutate: login } = useMutation(authAPI.login, {
     onSuccess: async (response) => {
       const { access_token, refresh_token, user, is_success } = response.data;
 
@@ -39,6 +41,7 @@ export default function LoginScreen() {
         setUserId(user.id);
         setAccessToken(access_token);
 
+        console.log(token)
         if (token) {
           // console.log(token);
           addFirebaseToken.mutate({ token });
@@ -48,7 +51,8 @@ export default function LoginScreen() {
       }
     },
     onError: (error: any) => {
-      setError(error.message);
+      // setError(error.message);
+      toaster.show({ message: error.message, type: "error" });
       // enqueueSnackbar(error.response.data.message, {
       //   variant: "error",
       // });
