@@ -86,7 +86,7 @@ const FriendListScreen = () => {
   const { isLoading, data, refetch } = useQuery({
     queryKey: ["findFriendsByText", searchQuery],
     queryFn: () => friendAPI.findByText({ text: searchQuery }),
-    enabled: true,
+    enabled: false,
     select: (rs) => {
       return rs.data;
     },
@@ -102,6 +102,13 @@ const FriendListScreen = () => {
       queryClient.removeQueries("findFriendsByText");
     }
   }, [])
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   return (
     <View>

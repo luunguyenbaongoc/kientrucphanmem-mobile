@@ -1,3 +1,4 @@
 import { Base } from './base.response';
+import { Token } from './token.response';
 
-export type RegisterResponse = Base;
+export type RegisterResponse = Token & Base;
