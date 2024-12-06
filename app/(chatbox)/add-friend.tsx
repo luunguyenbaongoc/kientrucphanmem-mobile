@@ -1,5 +1,6 @@
 import { friendAPI } from "@/api/friend.api";
 import { useCheckUserExist } from "@/hooks/useCheckUserExist";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -19,11 +20,14 @@ const AddFriendScreen = () => {
   const sendFriendRequest = useMutation(friendAPI.sendFriendRequest, {
     onSuccess: (response) => {
       const { created_date } = response.data;
-      toaster.show({
-        message: `Đã gửi yêu cầu kết bạn đến người dùng ${phone} thành công lúc ${created_date}`,
-        duration: 2000,
-        type: "success",
-      });
+      if (created_date) {
+        toaster.show({
+          message: `Đã gửi yêu cầu kết bạn đến người dùng ${phone} thành công`,
+          duration: 2000,
+          type: "success",
+        });
+        router.back();
+      }
     },
     onError: (error: any) => {
       toaster.show({
@@ -36,7 +40,7 @@ const AddFriendScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Thêm bạn</Text>
+      {/* <Text style={styles.title}>Thêm bạn</Text> */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
@@ -92,9 +96,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 20,
-    borderRadius: 10,
     padding: 10,
-    elevation: 3,
   },
   foundFriendContainer: {
     flexDirection: "row",
@@ -103,7 +105,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 10,
     padding: 10,
-    elevation: 3,
     backgroundColor: "#fff",
   },
   input: {
