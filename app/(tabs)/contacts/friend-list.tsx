@@ -35,7 +35,7 @@ const RenderItem = ({ userId, name, item, onCallPress }: ItemInfo) => {
         toUserId: item?.to_user_profile?.id,
       },
     });
-  }
+  };
 
   return (
     <TouchableOpacity onPress={handleOnPress}>
@@ -94,15 +94,17 @@ const FriendListScreen = () => {
 
   const handleSearchFriend = (text: string) => {
     setSearchQuery(text);
-    refetch();
   };
+
+  useEffect(() => {
+    refetch();
+  }, [searchQuery]);
 
   useEffect(() => {
     return () => {
       queryClient.removeQueries("findFriendsByText");
-    }
-  }, [])
-
+    };
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {

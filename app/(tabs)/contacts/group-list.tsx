@@ -81,8 +81,11 @@ const GroupListScreen = () => {
 
   const handleSearchFriend = (text: string) => {
     setSearchQuery(text);
-    refetch();
   };
+
+  useEffect(() => {
+    refetch();
+  }, [searchQuery]);
 
   useEffect(() => {
     return () => {
