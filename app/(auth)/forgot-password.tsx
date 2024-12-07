@@ -5,13 +5,42 @@ import { StyleSheet, Image } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
+import { useMutation } from "react-query";
+import { authAPI } from "@/api";
+import { useToast } from "react-native-paper-toast";
 
 export default function ForgotPasswordScreen() {
   const [phone, setPhone] = React.useState("");
+  const toaster = useToast();
+
+  const checkUser = useMutation(authAPI.checkUserExist, {
+    onSuccess: (res) => {
+      if (res.data) {
+        router.push({
+          pathname: "./reset-password",
+          params: { validPhone: phone },
+        });
+      } else {
+        toaster.show({
+          message: `Người dùng số điện thoại ${phone} không tồn tại.`,
+          duration: 2000,
+          type: "info",
+        });
+      }
+    },
+    onError: (err: any) => {
+      toaster.show({
+        message: err.message,
+        duration: 2000,
+        type: "error",
+      });
+    },
+  });
 
   function handleSubmitPhoneNumber() {
     // TODO: Implement login logic
-    router.navigate("./reset-password");
+    // router.navigate("./reset-password");
+    checkUser.mutate(phone);
   }
 
   return (

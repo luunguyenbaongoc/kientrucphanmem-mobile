@@ -8,9 +8,13 @@ import { useMutation, useQuery } from "react-query";
 import { authAPI } from "@/api";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { STORAGE_KEY } from "@/utils/constants";
+import { useAuth } from "@/contexts/AuthContext";
+import useNotification from "@/hooks/useNotification";
+import { userAPI } from "@/api/user.api";
 
 export default function RegisterScreen() {
-
   const [registerInfo, setRegisterInfo] = useState({
     phone: "",
     password: "",
@@ -18,12 +22,14 @@ export default function RegisterScreen() {
   } as RegisterDto);
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [errorText, setErrorText] = useState('');
+  const [errorText, setErrorText] = useState("");
   const [errorVisible, setErrorVisible] = useState(false);
+  const token = useNotification();
+  const { setUserId, setAccessToken } = useAuth();
 
   useQuery(
-    ['checkUserExist', registerInfo.phone], 
-    () => authAPI.checkUserExist(registerInfo.phone), 
+    ["checkUserExist", registerInfo.phone],
+    () => authAPI.checkUserExist(registerInfo.phone),
     {
       enabled: registerInfo.phone.length > 0,
       onSuccess: async (response) => {
@@ -31,8 +37,7 @@ export default function RegisterScreen() {
         if (exist) {
           setErrorText("Số điện thoại đã tồn tại!");
           setErrorVisible(true);
-        }
-        else {
+        } else {
           setErrorText("");
           setErrorVisible(false);
         }
@@ -40,19 +45,33 @@ export default function RegisterScreen() {
       onError: (error: any) => {
         setErrorText(error.message);
       },
-    },
+    }
   );
+
+  const addFirebaseToken = useMutation(userAPI.addFirebaseToken);
 
   const register = useMutation(authAPI.register, {
     onSuccess: async (response) => {
-      const { is_success } = response.data;
+      const { is_success, user, access_token, refresh_token } = response.data;
       if (is_success) {
-        router.navigate("./login");
+        await AsyncStorage.setItem(STORAGE_KEY.ID, user.id);
+        await AsyncStorage.setItem(STORAGE_KEY.ACCESS_TOKEN, access_token);
+        await AsyncStorage.setItem(STORAGE_KEY.REFRESH_TOKEN, refresh_token);
+
+        setUserId(user.id);
+        setAccessToken(access_token);
+
+        if (token) {
+          // console.log(token);
+          addFirebaseToken.mutate({ token });
+        }
+
+        router.navigate("../(tabs)");
       }
     },
     onError: (error: any) => {
-      setErrorText(error.response.data.message);
-      router.navigate("./register");
+      setErrorText(error.response);
+      // router.navigate("./register");
     },
   });
 
@@ -68,8 +87,7 @@ export default function RegisterScreen() {
     if (password !== registerInfo.password) {
       setErrorText("Mật khẩu không trùng khớp!");
       setErrorVisible(true);
-    }
-    else {
+    } else {
       setErrorText("");
       setErrorVisible(false);
     }
@@ -99,6 +117,13 @@ export default function RegisterScreen() {
       <ThemedView style={styles.stepContainer}>
         <TextInput
           mode="outlined"
+          label="Họ và tên"
+          placeholder="Nhập họ tên"
+          value={registerInfo.fullname}
+          onChangeText={(value) => onFormChangeHandler("fullname", value)}
+        />
+        <TextInput
+          mode="outlined"
           label="Số điện thoại"
           placeholder="Nhập số điện thoại"
           value={registerInfo.phone}
@@ -121,16 +146,7 @@ export default function RegisterScreen() {
           value={confirmPassword}
           onChangeText={checkIdenticalConfirmedPass}
         />
-        <TextInput
-          mode="outlined"
-          label="Họ và tên"
-          placeholder="Nhập họ tên"
-          value={registerInfo.fullname}
-          onChangeText={(value) => onFormChangeHandler("fullname", value)}
-        />
-        {
-          errorVisible && <ThemedText type='error'>{errorText}</ThemedText>
-        }
+        {errorVisible && <ThemedText type="error">{errorText}</ThemedText>}
         <Button
           style={{ backgroundColor: "#0190f3" }}
           mode="contained"

@@ -3,18 +3,60 @@ import { Button, TextInput } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { useToast } from "react-native-paper-toast";
+import { useMutation } from "react-query";
+import { authAPI } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { STORAGE_KEY } from "@/utils/constants";
+import { useAuth } from "@/contexts/AuthContext";
+import useNotification from "@/hooks/useNotification";
+import { userAPI } from "@/api/user.api";
 
 export default function ResetPasswordScreen() {
+  const { validPhone } = useLocalSearchParams<{
+    validPhone: string;
+  }>();
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [isPassIdentical, setIsPassIdentical] = React.useState(false);
+  const toaster = useToast();
+  const { setUserId, setAccessToken } = useAuth();
+  const token = useNotification();
+
+  const addFirebaseToken = useMutation(userAPI.addFirebaseToken);
+
+  const resetPassword = useMutation(authAPI.resetPassword, {
+    onSuccess: async (res) => {
+      const { access_token, refresh_token, user, is_success } = res.data;
+
+      if (is_success) {
+        await AsyncStorage.setItem(STORAGE_KEY.ID, user.id);
+        await AsyncStorage.setItem(STORAGE_KEY.ACCESS_TOKEN, access_token);
+        await AsyncStorage.setItem(STORAGE_KEY.REFRESH_TOKEN, refresh_token);
+
+        setUserId(user.id);
+        setAccessToken(access_token);
+
+        if (token) {
+          // console.log(token);
+          addFirebaseToken.mutate({ token });
+        }
+
+        router.navigate("../(tabs)");
+      }
+    },
+    onError: (err: any) => {
+      toaster.show({ message: err.message, type: "error" });
+    },
+  });
 
   const handleRequestChangePassword = () => {
-    // TODO: Implement login logic
-    // Replace with actual login logic when ready
-    if (true) {
-        router.navigate("./login");
+    if (password !== confirmPassword) {
+      toaster.show({ message: "Mật khẩu không khớp", type: "info" });
+      return;
     }
+    resetPassword.mutate({ phone: validPhone, new_password: password });
   };
 
   const checkValidPassword = (password: string) => {
@@ -45,7 +87,9 @@ export default function ResetPasswordScreen() {
           placeholder="Nhập mật khẩu"
           secureTextEntry={true}
           value={password}
-          onChangeText={checkValidPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+          }}
         />
         <TextInput
           mode="outlined"
@@ -53,7 +97,10 @@ export default function ResetPasswordScreen() {
           label="Xác nhận mật khẩu"
           placeholder="Nhập lại mật khẩu"
           secureTextEntry={true}
-          onChangeText={checkIdenticalConfirmedPass}
+          value={confirmPassword}
+          onChangeText={(text) => {
+            setConfirmPassword(text);
+          }}
         />
         <Button
           style={{ backgroundColor: "#0190f3" }}

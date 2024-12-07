@@ -1,5 +1,5 @@
 import { groupAPI } from "@/api/group.api";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useEffect } from "react";
 import {
   FlatList,
@@ -70,12 +70,13 @@ const GroupListScreen = () => {
     // console.log(`Making ${type} call`);
   };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["getGroupsByUser", searchQuery],
     queryFn: () => groupAPI.getGroups({ searchText: searchQuery }),
     select: (rs) => {
       return rs.data;
     },
+    enabled: false,
   });
 
   const handleSearchFriend = (text: string) => {
@@ -83,10 +84,20 @@ const GroupListScreen = () => {
   };
 
   useEffect(() => {
+    refetch();
+  }, [searchQuery]);
+
+  useEffect(() => {
     return () => {
       queryClient.removeQueries("getGroupsByUser");
-    }
-  }, [])
+    };
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
